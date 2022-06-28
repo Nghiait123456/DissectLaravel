@@ -18,8 +18,8 @@ gmail: minhnghia.pham.it@gmail.com
 
 
 # Table of Contents
-- [HowToUnderstandBigProject](#HowToUnderstandBigProject)
-- [PreviewLaravelLayout](#LayoutLaravel)
+- [How To Understand Big Project](#HowToUnderstandBigProject)
+- [Preview Laravel Layout](#LayoutLaravel)
     - [Php and index.php ](#PhpAndIndexPhp)
     - [index.php in laravel ](#IndexPhpLaravel)
     - [Public folder in laravel ](#PublicFolderIndexPhpLaravel)
@@ -93,5 +93,5 @@ DocumentRoot /home/anonymous/Desktop/Laravel/test/src/public
 First, Laravel creates a public folder to contain the system's public files or resources, SymLinks. +FollowSymLinks Config folder public allows webserver FollowSymLinks, "+MultiViews" : A MultiViews search is where the server does an implicit filename pattern match,and choose from amongst the results , “AllowOverride” which allows you to override some Apache settings via a . htaccess file you can place in a director. This config allows the webserver to do a lot of things with the public folder, it allows the webserver to access the files in the public folder and return it to the browser. Therefore, only files that are public will be placed in the public folder.
 
 ## When save file in public folder <a name="WhenSaveFileInPublicFolder"></a>
-With the public file used for all users, you should save it in the public folder: css, js, images...
+With the public file used for all users, you should save it in the public folder: css, js, images... </br>
 The files are specific to the request or the specific session, not stored in the public folder. Let's imagine with user1, request 1 you create 1.txt file, you save that file in public folder. File 1.txt is created at server handle request 1, called server 1. at Request 2, user1 get 1.xlsl, but loadbalance is not forward to server1, but is forwarded to server2. Clearly, server2 don't have the file exe1.xlsl, confused. For this problem, use the same remote server as S3, don't use Laravel's public folder
