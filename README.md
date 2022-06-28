@@ -117,9 +117,9 @@ Laravel source code has many modules, many interfaces and many design patterns. 
 the way me used in this doc is using file : https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Application.php#L1234. It gives you all information about alias mapping interface and binding class when starting laravel app. That's the bare minimum of information you need to dissect Laravel.
 
 
-## [Session](#sesion)
+## [Session](#Session)
 
-## [Define Session](#sesion)
+## [Define session](#DefineSession)
 ![](img/img.png)
 
 session = session_id + data mapping;  </br>
@@ -156,7 +156,7 @@ Session Manager extern Manager.php and it implements the function getDefaultDriv
 Print file: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Session/Session.php. It saves all interfaces for session interaction, including push(), get().
 
 
-## [Detail session](#DetailSession)
+### [Detail session](#DetailSession)
 /**
 * Register the session manager instance.
 *
