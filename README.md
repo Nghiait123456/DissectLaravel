@@ -24,7 +24,20 @@ gmail: minhnghia.pham.it@gmail.com
     - [index.php in laravel ](#IndexPhpLaravel)
     - [Public folder in laravel ](#PublicFolderIndexPhpLaravel)
     - [When save file in public folder ](#WhenSaveFileInPublicFolder)
-    - [Preview layout laravel](#LayoutLaravel)
+    - [How to disect Laravel source](#HowToDisectLaravelSource)
+
+- [Modul](#Modul)
+  - [Session](#Session)
+    - [Define session](#DefineSession)
+    - [Session in current web app](#SessionInCurrentWebApp)
+    - [Session default in php is not good](#DefaultSSPhpNotGood)
+    - [Session in laravel](#SessionInLaravel)
+      - [Preview session in laravel](#PreviewSessionInLaravel)
+      - [Dissect session in laravel](#DissectSessionInLaravel)
+        - [Concat session](#ConcatSession)
+        - [Detail session](#DetailSession)
+        
+
 
 ## How To Understand Big Project <a name="HowToUnderstandBigProject"></a>
 A large project always has a lot of lines of code, with laravel 7.X being around 400 000 lines of code. So how do you approach it? My approach is top down thinking, approach from layout code ==> autoload ==> module ==> detail. One question is do you need to know the entire line of code of an opensource to understand it? The answer is no. Any module or source has main components and options. The main component represents the main feature of the project. You only need to understand the whole main component, most of the options are based on the main component. That's how I and this document approach the Laravel source. I know that's the same way most programmers choose to approach a very large project.
@@ -94,4 +107,80 @@ First, Laravel creates a public folder to contain the system's public files or r
 
 ## When save file in public folder <a name="WhenSaveFileInPublicFolder"></a>
 With the public file used for all users, you should save it in the public folder: css, js, images... </br>
-The files are specific to the request or the specific session, not stored in the public folder. Let's imagine with user1, request 1 you create 1.txt file, you save that file in public folder. File 1.txt is created at server handle request 1, called server 1. at Request 2, user1 get 1.xlsl, but loadbalance is not forward to server1, but is forwarded to server2. Clearly, server2 don't have the file exe1.xlsl, confused. For this problem, use the same remote server as S3, don't use Laravel's public folder
+The files are specific to the request or the specific session, not stored in the public folder. Let's imagine with user1, request 1 you create 1.txt file, you save that file in public folder. File 1.txt is created at server handle request 1, called server 1. at Request 2, user1 get 1.xlsl, but loadbalance is not forward to server1, but is forwarded to server2. Clearly, server2 don't have the file 1.txt, confused. For this problem, use the same remote server as S3, don't use Laravel's public folder
+
+
+## [How to disect Laravel source](#HowToDisectLaravelSource) 
+Laravel source code has many modules, many interfaces and many design patterns. Before reviewing the source, the first thing you need to do is determine which interface x is used by and for which class it is binding, like with Facade. There are many ways to detect this, view file autoload, use ide_helper support loading endpoint,... <br/>
+
+the way me used in this doc is using file : https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Application.php#L1234. It gives you all information about alias mapping interface and binding class when starting laravel app. That's the bare minimum of information you need to dissect Laravel.
+
+
+## [Session](#sesion)
+
+## [Define Session](#sesion)
+![](img/img.png)
+
+session = session_id + data mapping;  </br>
+
+Simply put, a session is a memory area that is directly mapped to the user upon login. With any memory area, when using it, it is necessary to identify (session_id) and data (data mapping). sesson_id is unique.
+
+
+## [Session in current web app](#SessionInCurrentWebApp)
+In the modern world of web apps, especially microservices, it is not necessary to need a memory area that holds all the data when the user logs in. Data in microservices directly depends on services and events, tending to be independent and staless. However, when there is a need and need to use, or use any model like session, apply this simple rule: session = session_id + data mapping; </br>
+
+Session in web apps these days can use a lot of drivers, files, caches, DBs, cookies, etc. This is flexible and suitable for today's needs.
+
+##  [Session default in php is not good](#DefaultSSPhpNotGood)
+Session default in php not good enough? Exactly, it's not good enough for most web apps these days. Php auto generate session Id and save in cookie, drive of this default is file. There is almost no way to interfere with this process. This is obviously not good enough, use Laravel's session, it's a trend as most php frameworks are no longer using php's default session. Other frameworks Django, Flask, Gin, ... have different approaches to sessions but the basic idea is still the same general formula in the Session definition.
+
+## [Session in laravel](#SessionInLaravel)
+## [Preview session in laravel](#PreviewSessionInLaravel)
+Laravel Session is built by Laravel itself, completely independent of default php session. It fully supports all popular drives: cache (redis/memcache, file, DB, cookie, ...). In a modern web application that needs high performance, I recommend drive cache(redis/memcache).
+
+## [Dissect session in laravel](#DissectSessionInLaravel)
+## [Concat session](#ConcatSession)
+Session has many drives, the main operations with memory are read and write, so it is easy to guess the main interface is read(), write(), getDefaultDriver() </br>
+
+In line https://github.com/laravel/framework/blob/7.x/src/Illuminate/Support/Manager.php#L66 :
+/**
+* Get the default driver name.
+*
+* @return string
+*/
+abstract public function getDefaultDriver();
+
+Session Manager extern Manager.php and it implements the function getDefaultDriver() to determine the driver configured in the system. </br>
+
+Print file: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Session/Session.php. It saves all interfaces for session interaction, including push(), get().
+
+
+## [Detail session](#DetailSession)
+/**
+* Register the session manager instance.
+*
+* @return void
+*/
+protected function registerSessionManager()
+{
+$this->app->singleton('session', function ($app) {
+return new SessionManager($app);
+});
+}
+
+From snippet: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/SessionServiceProvider.php#L34-L39. Laravel registers a SessionManager() instance representing the laravel session.
+in SessionMager, Laravel implements abstract public function getDefaultDriver() using https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/SessionManager.php#L240-L243. It implements the interface and returns the instance of the session drive configured in the system. </br>
+
+How to laravel implement all driver and wrap it in code. After getting instance for session config in system, Laravel pass instance to :
+https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L57-L62
+public function __construct($name, SessionHandlerInterface $handler, $id = null)
+{
+$this->setId($id);
+$this->name = $name;
+$this->handler = $handler;
+}
+The SessionHandlerInterface represents one of the drives that Laravel has. The rest of the functions of the Store.php class are a wrapper for the SessionHandlerInterface. </br>
+
++) In drive: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/CacheBasedSessionHandler.php, it implements the most basic functions like get(), set(), distroy (). Session in laravel with any drive is saved to a session key, this operation is quite simple. </br>
+
+===> to summarize there are two class blocks, code block 1 gets the instance drive configured, Code block 2 implements the functions of each drive, this is the main job of the Laravel session.
