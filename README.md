@@ -91,7 +91,8 @@ Why laravel has public folder? Why is index.php in there. Benefits and security 
 
 Let's refer to a simple config of apache2 vs laravel:
 
-"""<VirtualHost *:80>
+``` 
+<VirtualHost *:80>
 ServerAdmin admin@test.com
 ServerName test.com
 DocumentRoot /home/anonymous/Desktop/Laravel/test/src/public
@@ -113,7 +114,7 @@ DocumentRoot /home/anonymous/Desktop/Laravel/test/src/public
     # alert, emerg.
     LogLevel warn
     CustomLog ${APACHE_LOG_DIR}/myapp.com-access.log combined
-
+``` 
 First, Laravel creates a public folder to contain the system's public files or resources, SymLinks. +FollowSymLinks Config folder public allows webserver FollowSymLinks, "+MultiViews" : A MultiViews search is where the server does an implicit filename pattern match,and choose from amongst the results , “AllowOverride” which allows you to override some Apache settings via a . htaccess file you can place in a director. This config allows the webserver to do a lot of things with the public folder, it allows the webserver to access the files in the public folder and return it to the browser. Therefore, only files that are public will be placed in the public folder.
 
 ## When save file in public folder <a name="WhenSaveFileInPublicFolder"></a>
@@ -167,6 +168,7 @@ Print file: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contrac
 
 
 ### Detail session <a name="DetailSession"></a>  
+``` 
 /**
 * Register the session manager instance.
 *
@@ -174,11 +176,11 @@ Print file: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contrac
 */
 protected function registerSessionManager()
 {
-$this->app->singleton('session', function ($app) {
-return new SessionManager($app);
+  $this->app->singleton('session', function ($app) {
+  return new SessionManager($app);
 });
 }
-
+``` 
 From snippet: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/SessionServiceProvider.php#L34-L39. Laravel registers a SessionManager() instance representing the laravel session.
 in SessionMager, Laravel implements abstract public function getDefaultDriver() using https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/SessionManager.php#L240-L243. It implements the interface and returns the instance of the session drive configured in the system. </br>
 
@@ -233,7 +235,7 @@ Laravel keep ideal Crsf when implement.
 How to create sessions?
 view code: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L64-L78 </br>
 
-'''
+``` 
 /**
 * Start the session, reading the data from a handler.
 *
@@ -250,7 +252,7 @@ view code: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/
          return $this->started = true;
   }
 
-''''
+``` 
 Laravel construct CSRF token when first time start session.
 if (! $this->has('_token')) {
 $this->regenerateToken();
@@ -260,7 +262,7 @@ when one requets incoming sever, laravel check CSRF token ('_token' ) exits, if 
 
 View code:
 https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L609-L617 <br>
-
+``` 
     /**
      * Regenerate the CSRF token value.
      *
@@ -270,12 +272,12 @@ https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L
     {
         $this->put('_token', Str::random(40));
     } </br>
-
+``` 
 CSRF token in laravel create by randon str. It's simple way why token don't contain data insight. CSRF token only one task, check macth CRSF token with form submit.
 +) How to Laravel save CSRF cookies?
 View code :
 https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L78-L82 </br>
-
+``` 
     /**
      * Handle an incoming request.
      *
@@ -302,12 +304,12 @@ https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Mid
 
         throw new TokenMismatchException('CSRF token mismatch.');
     }
-
+``` 
 For every incoming request, Laravel check exit XSRF cookie, if not exits, Laravel create it.
 
 +) How to Laravel verify CSRF token?
 view code: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L130-L143 </br>
-
+``` 
 /**
 * Determine if the session and input CSRF tokens match.
 *
@@ -322,7 +324,7 @@ $token = $this->getTokenFromRequest($request);
                is_string($token) &&
                hash_equals($request->session()->token(), $token);
     } </br>
-
+``` 
 print code : https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L72-L77, have many rule verify CSRF, but main rule, it is before. </br>
 Simple way, Laravel just checks CSRF in session and CSRF in cookie(XSRF) is matching, hash_equals($request->session()->token(), $token).
 
