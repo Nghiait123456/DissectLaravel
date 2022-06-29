@@ -43,7 +43,7 @@ gmail: minhnghia.pham.it@gmail.com
 
 ## How To Understand Big Project <a name="HowToUnderstandBigProject"></a>
 A large project always has a lot of lines of code, with laravel 7.X being around 400 000 lines of code. So how do you approach it? My approach is top down thinking, approach from layout code ==> autoload ==> module ==> detail. One question is do you need to know the entire line of code of an opensource to understand it? The answer is no. Any module or source has main components and options. The main component represents the main feature of the project. You only need to understand the whole main component, most of the options are based on the main component. That's how I and this document approach the Laravel source. I know that's the same way most programmers choose to approach a very large project.
-
+## Preview Laravel Layout <a name="LayoutLaravel"></a> 
 ## Php And Index.php <a name="PhpAndIndexPhp"></a>
 In any programming language, there is usually a startpoint to start a project. Print c, go, c++, it's main() function, print php, it's index.php
 
