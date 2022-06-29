@@ -47,6 +47,8 @@ gmail: minhnghia.pham.it@gmail.com
       - [Xss Security Define](#XssSecurityDefine)
       - [Prevention Xss](#PreventionXss)
       - [Best practice Xss](#BestPracticeXss)
+      - [Where save token in browser](#WhereSaveToken)
+        - [How to ajax,... work with Http only cookie](#AjaxHttpOnlyCookie)
         
 
 
@@ -70,7 +72,7 @@ InLine 38:
 ``` 
 $app = require_once __DIR__.'/../bootstrap/app.php';
 ``` 
-Laravel mapping and bilding interface of laravel with application.
+Laravel mapping and building interface of laravel with application.
 
 
 print line 52 to 60:
@@ -231,7 +233,7 @@ Ideal is : we create token for submit form, when submit form, if token match, we
 
 ## Why don't use Csrf for GET method <a name="DontUseCsrfForGetMethod"></a>
 Why don't use CSRF for GET method: </br>
-In define api, GET method return data, not change resouce, it's not risk of attacks. Of course you can use the CSRF token for the get but it's not necessary, always remember the theorem, security and complexity are usually proportional.
+In define api, GET method return data, not change resouce, it's not risk of attacks. Of course, you can use the CSRF token for the Get method,so it's not necessary, always remember the theorem, security and complexity are usually proportional.
 
 
 ## Csrf Token Laravel <a name="CrsfTokenLaravel"></a>
@@ -335,4 +337,60 @@ Simple way, Laravel just checks CSRF in session and CSRF in cookie(XSRF) is matc
 ===> From Laravel source, you learned one rule for timing attack. When you compare token, don't use ===, please you hash_compare or function same in other language.</br>
 ===> Well done, you clearly how to Laravel implement CSRF token.
 You have skill debug of hard bug related to CSRF, 419 page expiry. Have CSRF bug is difficult to find context, but if you clearly core Laravel CSRF, you ready debug all.
+```
+
+## Xss <a name="Xss"></a>
+## Xss Security Define] <a name="XssSecurityDefine"></a>
+![](img/xss_define.png)
+
+
+1) The attacker injects a payload into the website’s database by submitting a vulnerable form with malicious JavaScript content. </br>
+2) The victim requests the web page from the web server. </br>
+3) The web server serves the victim’s browser the page with attacker’s payload as part of the HTML body. </br>
+4) The victim’s browser executes the malicious script contained in the HTML body. In this case, it sends the victim’s cookie to the attacker’s server.
+5) The attacker now simply needs to extract the victim’s cookie when the HTTP request arrives at the server. </br>
+6) The attacker can now use the victim’s stolen cookie for impersonation. </br>
+
+```
+In short, Xss attack from the trust a use has in a particular Web application.
+```
+
+
+
+## Prevention Xss <a name="PreventionXss"></a>
+How to Prevent Xss: </br>
++) Filter resource Xss </br>
++) Http Cookies only </br>
++) SameSite Origin Cookies </br>
++) Open mode check CORS in backend(not good solution) </br>
+
+## Best practice Xss <a name="BestPracticeXss"></a> 
+In my way, best practice prevent Xss:
++) Actively filter data Xss after save
++) Http Only cookies, Http Same Site Origin cookies
+
+
+## Where save token in browser <a name="WhereSaveToken"></a> 
+Where to save tokens in browser? This is classic Q/A? </br>
+There are countless answers and countless approaches. For me when approaching in the direction of security and performance, it my way: </br>
++) token always save in cookie with http only, security, same site,... </br>
+==> it is the best way for security, leading security organizations advise to do it. </br>
+
+But, In Mode Http only, js don't get cookies. So, how to call ajax, ... or same tool to request to server. Please check next part. </br>
+
+## How to ajax,... work with Http only cookie <a name="AjaxHttpOnlyCookie"></a> 
+This is problem: token (jwt token) default don't verify from cookie. Token is stateless, in app or end point, it is usually passed to header. But in broswer, in part: #WhereSaveToken, i suggest token should be stored http only cookie. </br>
+
+How to pass jwt verify when js don't get cookies in http only mode? </br>
+
+I find many solutions in internet, but most of them are not good enough or too complicated, too risky. The most commonly found solutiton was: XMLHTTPresponse headers are giving the cookie. It's very bad ideal. </br>
+
+Luckily, I find solution match with my solution, it's simples way but don't have risk, don't have down performance: </br>
+https://medium.com/lightrail/getting-token-authentication-right-in-a-stateless-single-page-application-57d0c6474e3 </br>
+
+![](img/solution_call_ajax_http_only.png)
+
+```
+Simple way, leave that to the backend. All you need to do is create a middleware, middleware job is to check exist jwt in header, if not exits, it's auto copy jwt from cookie to header. If done, it's return and allow next handle. </br>
+This solution work for all browser and all tool call api. Great !!!
 ```
