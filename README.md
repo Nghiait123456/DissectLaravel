@@ -13,8 +13,8 @@ All copyrights of the material belong to me. You can read, use, share for many p
 # Contacts
 gmail: minhnghia.pham.it@gmail.com
 
-# Quick Look (HowTo): Scenarios - Hands-on LAB
-- [Overview and layout sourcecode Laravel](https://thisislink.com)
+# Quick Look (HowTo):
+- [Overview and layout sourcecode Laravel](https://github.com/Nghiait123456/DissectLaravel#LayoutLaravel)
 
 
 # Table of Contents
@@ -24,7 +24,7 @@ gmail: minhnghia.pham.it@gmail.com
     - [index.php in laravel ](#IndexPhpLaravel)
     - [Public folder in laravel ](#PublicFolderIndexPhpLaravel)
     - [When save file in public folder ](#WhenSaveFileInPublicFolder)
-    - [How to disect Laravel source](#HowToDisectLaravelSource)
+    - [How to dissect Laravel source](#HowToDisectLaravelSource)
 
 - [Modul](#Modul)
   - [Session](#Session)
@@ -34,9 +34,19 @@ gmail: minhnghia.pham.it@gmail.com
     - [Session in laravel](#SessionInLaravel)
     - [Preview session in laravel](#PreviewSessionInLaravel)
     - [Dissect session in laravel](#DissectSessionInLaravel)
-    - [Concat session](#ConcatSession)
-    - [Detail session](#DetailSession)
-      - [Csrf](#Csrf)
+      - [Concat session](#ConcatSession)
+      - [Detail session](#DetailSession)
+    - [Csrf](#Csrf)
+      - [Csrf Security Define](#CsrfSecurityDefine)
+      - [Prevention Csrf](#PreventionCsrf)
+      - [Csrf Token Define](#CrsfTokenDefines)
+      - [Why Don't Use Crsf For GET Method](#DontUseCsrfForGetMethod)
+      - [Csrf Token Laravel](#CrsfTokenLaravel)
+      - [Best practice Csrf Laravel](#BestPracticeCsrfLaravel)
+    - [Xss](#Xss)
+      - [Xss Security Define](#XssSecurityDefine)
+      - [Prevention Xss](#PreventionXss)
+      - [Best practice Xss](#BestPracticeXss)
         
 
 
@@ -120,7 +130,7 @@ the way me used in this doc is using file : https://github.com/laravel/framework
 ## Session <a name="Session"></a>
 
 ## Define session  <a name="DefineSession"></a>  
-![](img/img.png)
+![](img/session_define.png)
 
 session = session_id + data mapping;  </br>
 
@@ -140,7 +150,7 @@ Session default in php not good enough? Exactly, it's not good enough for most w
 Laravel Session is built by Laravel itself, completely independent of default php session. It fully supports all popular drives: cache (redis/memcache, file, DB, cookie, ...). In a modern web application that needs high performance, I recommend drive cache(redis/memcache).
 
 ## Dissect session in laravel  <a name="DissectSessionInLaravel"></a>  
-## Concat session <a name="ConcatSession"></a>   
+### Concat session <a name="ConcatSession"></a>   
 Session has many drives, the main operations with memory are read and write, so it is easy to guess the main interface is read(), write(), getDefaultDriver() </br>
 
 In line https://github.com/laravel/framework/blob/7.x/src/Illuminate/Support/Manager.php#L66 :
@@ -185,3 +195,137 @@ The SessionHandlerInterface represents one of the drives that Laravel has. The r
 +) In drive: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/CacheBasedSessionHandler.php, it implements the most basic functions like get(), set(), distroy (). Session in laravel with any drive is saved to a session key, this operation is quite simple. </br>
 
 ===> to summarize there are two class blocks, code block 1 gets the instance drive configured, Code block 2 implements the functions of each drive, this is the main job of the Laravel session.
+
+# Csrf <a name="Csrf"></a>
+## Csrf Security Define <a name="CsrfSecurityDefine"></a>
+  
+![](img/csrf_define.png)
+
+Csrf is define clear in link: https://creativegroundtech.com/what-is-cross-site-request-forgery-csrf/. CSRF attacks explois the trust a Web application has in an authenticated user. </br>
+
+In short, user after authen success, hacker trick user into interacting with a page, from, link, ... or anything form other web. After this action, hackers often submit a form to the web they want to attack. Because action form user authen, broswer forward cookie and data, then request is valid. Hackers look for loopholes to send requests that damage users and websites.
+
+## Prevention Csrf <a name="PreventionCsrf"></a> 
+Prevention Csrf:
+Starting from the CSRF definition, i have prevention way:
++) Use Same Site Flag Cookie : cookie will only be sent from request originating from 1 domain, hacker attack but request reject beacause fail authen. </br>
+
++) Crsf Token: will explain in next part
+
++) Open mode check CORS : it's bad solution, why it changes very much business. It's just only good solution when web wants open check CORS(not for prevention CSRF, for business)
+
+
+## Csrf Token Define <a name="CrsfTokenDefines"></a>
+![](img/csrf_token.png)
+
+Detail process CRSF token in link: https://terasolunaorg.github.io/guideline/5.1.0.RELEASE/en/Security/CSRF.html </br>
+
+I want to emphasize, the object of the csrf token is usually a post form. Why? It's the second protection mechanism after the authen websie for CSRF attack. </br>
+Ideal is : we create token for submit form, when submit form, if token match, we access, if not match, we reject. If hacker pass authen form CSRF, hacker don't simple get CSRF token ==> hacker don't submit form ==> don't have any attacks.
+
+## Why don't use Csrf for GET method <a name="DontUseCsrfForGetMethod"></a>
+Why don't use CSRF for GET method: </br>
+In define api, GET method return data, not change resouce, it's not risk of attacks. Of course you can use the CSRF token for the get but it's not necessary, always remember the theorem, security and complexity are usually proportional.
+
+
+## Csrf Token Laravel <a name="CrsfTokenLaravel"></a>
+Laravel keep ideal Crsf when implement.
+How to create sessions?
+view code: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L64-L78 </br>
+
+'''
+/**
+* Start the session, reading the data from a handler.
+*
+* @return bool
+  */
+  public function start()
+  {
+  $this->loadSession();
+
+         if (! $this->has('_token')) {
+             $this->regenerateToken();
+         }
+
+         return $this->started = true;
+  }
+
+''''
+Laravel construct CSRF token when first time start session.
+if (! $this->has('_token')) {
+$this->regenerateToken();
+} </br>
+
+when one requets incoming sever, laravel check CSRF token ('_token' ) exits, if not exits, Laravel create new CSRF token.
+
+View code:
+https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L609-L617 <br>
+
+    /**
+     * Regenerate the CSRF token value.
+     *
+     * @return void
+     */
+    public function regenerateToken()
+    {
+        $this->put('_token', Str::random(40));
+    } </br>
+
+CSRF token in laravel create by randon str. It's simple way why token don't contain data insight. CSRF token only one task, check macth CRSF token with form submit.
++) How to Laravel save CSRF cookies?
+View code :
+https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L78-L82 </br>
+
+    /**
+     * Handle an incoming request.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
+     * @return mixed
+     *
+     * @throws \Illuminate\Session\TokenMismatchException
+     */
+    public function handle($request, Closure $next)
+    {
+        if (
+            $this->isReading($request) ||
+            $this->runningUnitTests() ||
+            $this->inExceptArray($request) ||
+            $this->tokensMatch($request)
+        ) {
+            return tap($next($request), function ($response) use ($request) {
+                if ($this->shouldAddXsrfTokenCookie()) {
+                    $this->addCookieToResponse($request, $response);
+                }
+            });
+        }
+
+        throw new TokenMismatchException('CSRF token mismatch.');
+    }
+
+For every incoming request, Laravel check exit XSRF cookie, if not exits, Laravel create it.
+
++) How to Laravel verify CSRF token?
+view code: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L130-L143 </br>
+
+/**
+* Determine if the session and input CSRF tokens match.
+*
+* @param \Illuminate\Http\Request $request
+* @return bool
+*/
+protected function tokensMatch($request)
+{
+$token = $this->getTokenFromRequest($request);
+
+        return is_string($request->session()->token()) &&
+               is_string($token) &&
+               hash_equals($request->session()->token(), $token);
+    } </br>
+
+print code : https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L72-L77, have many rule verify CSRF, but main rule, it is before. </br>
+Simple way, Laravel just checks CSRF in session and CSRF in cookie(XSRF) is matching, hash_equals($request->session()->token(), $token).
+
+===> From Laravel source, you learned one rule for timing attack. When you compare token, don't use ===, please you hash_compare or function same in other language.</br>
+===> Well done, you clearly how to Laravel implement CSRF token.
+You have skill debug of hard bug related to CSRF, 419 page expiry. Have CSRF bug is difficult to find context, but if you clearly core Laravel CSRF, you ready debug all.
