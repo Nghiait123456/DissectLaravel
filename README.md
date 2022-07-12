@@ -456,7 +456,7 @@ In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routin
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Http/Kernel.php, Laravel defines interface for Bootstrap http request to kernel, defines endpoint handle() for handling all http requests </br>
 
 ## Dissect http and routing modules <a name="DissectHttpAndRoutingModules"></a>
-## How to register one router work? <a name="HowToRegisterOneRouterWork"></a>  
+## How to register one router work? <a name="HowToRegisterOneRouterWork?"></a>  
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Routing/Router.php, preview one router get: </br>
 ``` 
 /**
@@ -562,10 +562,10 @@ foreach ($route->methods() as $method) {
 }
 ``` 
 
-## How to mapping request to server with router? <a name="HowToMappingRequestToServerWithRoute"></a>
+## How to mapping request to server with router? <a name="HowToMappingRequestToServerWithRoute?"></a>
 Simply put, laravel aggregates all the routes you subscribe to in an array (specifically in the previous section). Each request to the webserver, laravel parses request information and maping with array saved all router. </br>
 
-## Laravel handle all request with one endpoint.? <a name="LaravelHandleAllRequestWithOneEndpoint"></a>
+## Laravel handle all request with one endpoint <a name="LaravelHandleAllRequestWithOneEndpoint"></a>
 source index.php:
 ``` 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
