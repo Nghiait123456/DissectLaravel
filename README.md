@@ -56,7 +56,7 @@ gmail: minhnghia.pham.it@gmail.com
     - [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
     - [Preview contracts in http modules](#PreviewContractsInHttpModules)
     - [Dissect http and routing modules](#DissectHttpAndRoutingModules)
-      - [How to resign one router work?](#HowToResignOneRouterWork?)
+      - [How to register one router work?](#HowToRegisterOneRouterWork?)
       - [How to mapping request to server with router?](#HowToMappingRequestToServerWithRoute?)
       - [Laravel handle all request with one endpoint](#LaravelHandleAllRequestWithOneEndpoint)
   
@@ -442,31 +442,21 @@ WebServers are integrated with the language's technology, achieving very high pe
    ==> this is a model with performance close to Haproxy, the key is non blocking form epoll and pool worker, ring buffer </br>
 
 ## What is trending in Http server? <a name="WhatIsTrendingInHttpServer"></a>
-- [Http](#Http)
-    - [Preview type Http server](#PreviewTypeHttpServer)
-    - [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
-    - [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
-    - [Preview contracts in http modul](#PreviewContractsInHttpModul)
-    - [Dissect http and routing modules](#DissectHttpModul)
-        - [How to resign one router work?](#HowToResignOneRouterWork?)
-        - [How to mapping request to server with router?](#HowToMappingRequestToServerWithRoute?)
-        - [Laravel handle all request with one endpoint.](#LaravelHandleAllRequestWithOneEndpoint)
-
 For performance, trending is WebServer integrated with platform. But, in terms of popularity, the Independent webserver model is more popular. </br>
 
 
 ## Type http server in Php and Laravel. <a name="TypeHttpServerInPhpAndLaravel"></a>  
 Php has webserver types according to both models above, but the most popular model is 1: Independent webserver. The same is true for Laravel </br>
 
-##  Preview contracts in http modules (#PreviewContractsInHttpModules)
+##  Preview contracts in http modules <a name="PreviewContractsInHttpModules"></a>  
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routing/Registrar.php , laravel defines the related interfaces that register a common http method: GET, POST, PUSH, OPTION </br>
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routing/BindingRegistrar.php, Laravel defines the interface for binding a router. </br>
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Http/Kernel.php, Laravel defines interface for Bootstrap http request to kernel, defines endpoint handle() for handling all http requests </br>
 
-## Dissect http and routing modules (#DissectHttpAndRoutingModules)
-## How to resign one router work? (#HowToResignOneRouterWork?)
+## Dissect http and routing modules <a name="DissectHttpAndRoutingModules"></a>
+## How to register one router work?  <a name="HowToRegisterOneRouterWork"></a>
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Routing/Router.php, preview one router get: </br>
 ``` 
 /**
@@ -572,10 +562,10 @@ foreach ($route->methods() as $method) {
 }
 ``` 
 
-## How to mapping request to server with router? (#HowToMappingRequestToServerWithRoute?)
+## How to mapping request to server with router? <a name="HowToMappingRequestToServerWithRoute"></a>
 Simply put, laravel aggregates all the routes you subscribe to in an array (specifically in the previous section). Each request to the webserver, laravel parses request information and maping with array saved all router. </br>
 
-## Laravel handle all request with one endpoint.? (#LaravelHandleAllRequestWithOneEndpoint?)
+## Laravel handle all request with one endpoint.? <a name="LaravelHandleAllRequestWithOneEndpoint"></a>
 source index.php:
 ``` 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
