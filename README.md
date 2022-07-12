@@ -52,6 +52,8 @@ gmail: minhnghia.pham.it@gmail.com
 
   - [Http and Routing](#HttpAndRouting)
     - [Preview type Http server](#PreviewTypeHttpServer)
+    - [Why  are there so many webserver models?](#WhyAreThereSoManyWebserverModels?)
+    - [Why is the webServer model constantly changing?](#WhyIsTheWebServerModelConstantlyChanging?)
     - [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
     - [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
     - [Preview contracts in http modules](#PreviewContractsInHttpModules)
@@ -173,6 +175,7 @@ Laravel Session is built by Laravel itself, completely independent of default ph
 Session has many drives, the main operations with memory are read and write, so it is easy to guess the main interface is read(), write(), getDefaultDriver() </br>
 
 In line https://github.com/laravel/framework/blob/7.x/src/Illuminate/Support/Manager.php#L66 :
+```
 /**
 * Get the default driver name.
 *
@@ -180,6 +183,7 @@ In line https://github.com/laravel/framework/blob/7.x/src/Illuminate/Support/Man
 */
 abstract public function getDefaultDriver();
 
+```
 Session Manager extern Manager.php and it implements the function getDefaultDriver() to determine the driver configured in the system. </br>
 
 Print file: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Session/Session.php. It saves all interfaces for session interaction, including push(), get().
@@ -241,7 +245,7 @@ Starting from the CSRF definition, i have prevention way:
 Detail process CRSF token in link: https://terasolunaorg.github.io/guideline/5.1.0.RELEASE/en/Security/CSRF.html </br>
 
 I want to emphasize, the object of the csrf token is usually a post form. Why? It's the second protection mechanism after the authen websie for CSRF attack. </br>
-Ideal is : we create token for submit form, when submit form, if token match, we access, if not match, we reject. If hacker pass authen form CSRF, hacker don't simple get CSRF token ==> hacker don't submit form ==> don't have any attacks.
+Ideal is : we create token for submit form, when submit form, if token match, we access, if not match, we reject. If hacker pass authen base session or token use CSRF attack, hacker don't simple get CSRF token ==> hacker don't submit form ==> don't have any attacks.
 
 ## Why don't use Csrf for GET method <a name="DontUseCsrfForGetMethod"></a>
 Why don't use CSRF for GET method: </br>
@@ -336,12 +340,12 @@ view code: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundati
 */
 protected function tokensMatch($request)
 {
-$token = $this->getTokenFromRequest($request);
+    $token = $this->getTokenFromRequest($request);
 
-        return is_string($request->session()->token()) &&
-               is_string($token) &&
-               hash_equals($request->session()->token(), $token);
-    } </br>
+    return is_string($request->session()->token()) &&
+           is_string($token) &&
+           hash_equals($request->session()->token(), $token);
+} 
 ``` 
 print code : https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L72-L77, have many rule verify CSRF, but main rule, it is before. </br>
 Simple way, Laravel just checks CSRF in session and CSRF in cookie(XSRF) is matching, hash_equals($request->session()->token(), $token).
@@ -352,7 +356,7 @@ You have skill debug of hard bug related to CSRF, 419 page expiry. Have CSRF bug
 ```
 
 ## Xss <a name="Xss"></a>
-## Xss Security Define] <a name="XssSecurityDefine"></a>
+## Xss Security Define <a name="XssSecurityDefine"></a>
 ![](img/xss_define.png)
 
 
@@ -455,6 +459,13 @@ In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routin
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Http/Kernel.php, Laravel defines interface for Bootstrap http request to kernel, defines endpoint handle() for handling all http requests </br>
 
+##  Why  are there so many webserver models? <a name="WhyAreThereSoManyWebserverModels?"></a>
+There are many languages and backend approaches, each of which needs to have some appropriate webserver model. </br>
+## Why is the webServer model constantly changing? <a name="WhyIsTheWebServerModelConstantlyChanging?"></a>
+Languages and technologies change constantly, so do web servers. But keep in mind that the ultimate goal of webserver improvement is usually to increase more than the amount of rps that can be handled in a server. </br>
+##  Preview contracts in http modules <a name="PreviewContractsInHttpModules"></a>
+    - [Why  are there so many webserver models?](#WhyAreThereSoManyWebserverModels?)
+    - [Why is the webServer model constantly changing?](#WhyIsTheWebServerModelConstantlyChanging?)
 ## Dissect http and routing modules <a name="DissectHttpAndRoutingModules"></a>
 ## How to register one router work? <a name="HowToRegisterOneRouterWork?"></a>  
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Routing/Router.php, preview one router get: </br>
