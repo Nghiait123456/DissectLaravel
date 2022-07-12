@@ -456,7 +456,7 @@ In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routin
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Http/Kernel.php, Laravel defines interface for Bootstrap http request to kernel, defines endpoint handle() for handling all http requests </br>
 
 ## Dissect http and routing modules <a name="DissectHttpAndRoutingModules"></a>
-## How to register one router work?  <a name="HowToRegisterOneRouterWork"></a>
+## How to register one router work? <a name="HowToRegisterOneRouterWork"></a>  
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Routing/Router.php, preview one router get: </br>
 ``` 
 /**
