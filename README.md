@@ -49,6 +49,15 @@ gmail: minhnghia.pham.it@gmail.com
       - [Best practice Xss](#BestPracticeXss)
       - [Where save token in browser](#WhereSaveToken)
         - [How to ajax,... work with Http only cookie](#AjaxHttpOnlyCookie)
+
+  - [Http](#Http)
+    - [Preview type Http server](#PreviewTypeHttpServer)
+    - [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
+    - [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
+    - [How to Web server work with Laravel](#HowToWebServerWorkWithLaravel)
+    - [Preview contracts in http modul](#PreviewContractsInHttpModul)
+    - [Dissect http modul](#DissectHttpModul)
+  
         
 
 
@@ -394,3 +403,37 @@ https://medium.com/lightrail/getting-token-authentication-right-in-a-stateless-s
 Simple way, leave that to the backend. All you need to do is create a middleware, middleware job is to check exist jwt in header, if not exits, it's auto copy jwt from cookie to header. If done, it's return and allow next handle. </br>
 This solution work for all browser and all tool call api. Great !!!
 ```
+
+
+## Http modul <a name="Http"></a>
+## Preview type Http server <a name="PreviewTypeHttpServer"></a>
+1) Independent webserver: </br>
+![](img/apache_process.png)
+This is the classic model of the traditional webserver and is still commonly used for most interpreted languages today. You have a WebServer completely independent of the language, with each request to the server, the WebServer listens to the signal and request information from the OS, the WebServer generates a process to handle the request. Process finds the root folder of the language, finds the endpoint run process (with php usually index.php). Index.php mapping request with handle function and response. </br>
+Today, this model is inferior to the new models because of some inherent weaknesses, the process is required to run on the OS, the cost switch context WebServer and Script is relatively high, the size of one process handle request is often large. </br>
+
+2) WebServer integrated with platform: </br>
+
+WebServers are integrated with the language's technology, achieving very high performance and suitability for that language. This mechanism is most common in compiled languages. Let's examine the example with golang:
+
+1) net/http server:
+![](img/net_http_golang.png)
+   1) registering the processor into a hash table, which can be matched by key-value routing. </br>
+   2) after registration, a loop is opened to listen, and a Goroutine is created every time a connection is listening to. </br>
+   3) the created Goroutine will wait in a loop to receive the request data, then match the processor with the request address in the processor routing table and pass the request to the processor for processing. </br>
+
+==> This model gives great performance because each Goroutine handle request is about 2 to 8 KB in size, can create a huge concurrency threshold with the same number of servers to handle the request. </br>
+
+2) fast http golang:
+![](img/fast_http_golang.png)
+   1) initiating a listen. </br>
+   2) listen to the port in a loop to get a connection. </br>
+   3) first fetch the workerChan from the ready queue when it gets a connection, and then fetch it from the object pool if it doesn't. </br>
+   4) pass the listening connection into the workerChan's channel. </br>
+   5) the workerChan has a Goroutine that loops through the data in the channel, and when it gets it, it processes the request and returns it. </br>
+      ===> this model has ten times better performance than net/http at high load because of using worker pool advantage, no reInit worker cost. </br>
+
+
+3) gnet golang:
+![](img/gnet.png)
+   ==> this is a model with performance close to Haproxy, the key is non blocking form epoll and pool worker, ring buffer </br>
