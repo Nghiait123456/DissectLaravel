@@ -26,7 +26,7 @@ gmail: minhnghia.pham.it@gmail.com
     - [When save file in public folder ](#WhenSaveFileInPublicFolder)
     - [How to dissect Laravel source](#HowToDisectLaravelSource)
 
-- [Modul](#Modul)
+- [Modules](#Modul)
   - [Session](#Session)
     - [Define session](#DefineSession)
     - [Session in current web app](#SessionInCurrentWebApp)
@@ -50,13 +50,16 @@ gmail: minhnghia.pham.it@gmail.com
       - [Where save token in browser](#WhereSaveToken)
         - [How to ajax,... work with Http only cookie](#AjaxHttpOnlyCookie)
 
-  - [Http](#Http)
+  - [Http and Routing](#HttpAndRouting)
     - [Preview type Http server](#PreviewTypeHttpServer)
     - [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
     - [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
-    - [How to Web server work with Laravel](#HowToWebServerWorkWithLaravel)
-    - [Preview contracts in http modul](#PreviewContractsInHttpModul)
-    - [Dissect http modul](#DissectHttpModul)
+    - [Preview contracts in http modules](#PreviewContractsInHttpModules)
+    - [Dissect http and routing modules](#DissectHttpAndRoutingModules)
+      - [How to resign one router work?](#HowToResignOneRouterWork?)
+      - [How to mapping request to server with router?](#HowToMappingRequestToServerWithRoute?)
+      - [Laravel handle all request with one endpoint](#LaravelHandleAllRequestWithOneEndpoint)
+  
   
         
 
@@ -405,7 +408,7 @@ This solution work for all browser and all tool call api. Great !!!
 ```
 
 
-## Http modul <a name="Http"></a>
+## Http and Routing <a name="HttpAndRouting"></a>
 ## Preview type Http server <a name="PreviewTypeHttpServer"></a>
 1) Independent webserver: </br>
 ![](img/apache_process.png)
@@ -437,3 +440,201 @@ WebServers are integrated with the language's technology, achieving very high pe
 3) gnet golang:
 ![](img/gnet.png)
    ==> this is a model with performance close to Haproxy, the key is non blocking form epoll and pool worker, ring buffer </br>
+
+## What is trending in Http server? <a name="WhatIsTrendingInHttpServer"></a>
+- [Http](#Http)
+    - [Preview type Http server](#PreviewTypeHttpServer)
+    - [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
+    - [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
+    - [Preview contracts in http modul](#PreviewContractsInHttpModul)
+    - [Dissect http and routing modules](#DissectHttpModul)
+        - [How to resign one router work?](#HowToResignOneRouterWork?)
+        - [How to mapping request to server with router?](#HowToMappingRequestToServerWithRoute?)
+        - [Laravel handle all request with one endpoint.](#LaravelHandleAllRequestWithOneEndpoint)
+
+For performance, trending is WebServer integrated with platform. But, in terms of popularity, the Independent webserver model is more popular. </br>
+
+
+## Type http server in Php and Laravel. <a name="TypeHttpServerInPhpAndLaravel"></a>  
+Php has webserver types according to both models above, but the most popular model is 1: Independent webserver. The same is true for Laravel </br>
+
+##  Preview contracts in http modules (#PreviewContractsInHttpModules)
+In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routing/Registrar.php , laravel defines the related interfaces that register a common http method: GET, POST, PUSH, OPTION </br>
+
+In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routing/BindingRegistrar.php, Laravel defines the interface for binding a router. </br>
+
+In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Http/Kernel.php, Laravel defines interface for Bootstrap http request to kernel, defines endpoint handle() for handling all http requests </br>
+
+## Dissect http and routing modules (#DissectHttpAndRoutingModules)
+## How to resign one router work? (#HowToResignOneRouterWork?)
+In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Routing/Router.php, preview one router get: </br>
+``` 
+/**
+* Register a new GET route with the router.
+*
+* @param string $uri
+* @param array|string|callable|null $action
+* @return \Illuminate\Routing\Route
+*/
+public function get($uri, $action = null)
+{
+    return $this->addRoute(['GET', 'HEAD'], $uri, $action);
+}
+``` 
+
+When you register a router, laravel will save the router information and action handle it. Dig deep into the function, you will see:
+
+``` 
+/**
+* Add a Route instance to the collection.
+*
+* @param \Illuminate\Routing\Route $route
+* @return \Illuminate\Routing\Route
+*/
+public function add(Route $route)
+{
+    $this->addToCollections($route);
+
+        $this->addLookups($route);
+
+        return $route;
+    }
+
+    /**
+     * Add the given route to the arrays of routes.
+     *
+     * @param \Illuminate\Routing\Route $route
+     * @return void
+     */
+    protected function addToCollections($route)
+    {
+        $domainAndUri = $route->getDomain().$route->uri();
+
+        foreach ($route->methods() as $method) {
+            $this->routes[$method][$domainAndUri] = $route;
+        }
+
+        $this->allRoutes[$method.$domainAndUri] = $route;
+    }
+
+``` 
+
+=) in class namespace Illuminate\Routing\Route, laravel fully defines a router's method, including route information, action handle request to be encode and parser specifically:
+
+``` 
+/**
+* Parse the given action into an array.
+*
+* @param string $uri
+* @param mixed $action
+* @return array
+*/
+public static function parse($uri, $action)
+{
+    // If no action is passed in right away, we assume the user will make use of
+    // fluent routing. In that case, we set a default closure, to be executed
+    // if the user never explicitly sets an action to handle the given uri.
+    if (is_null($action)) {
+    return static::missingAction($uri);
+    }
+
+    // If the action is already a Closure instance, we will just set that instance
+    // as the "uses" property, because there is nothing else we need to do when
+    // it is available. Otherwise we will need to find it in the action list.
+    if (is_callable($action, true)) {
+        return ! is_array($action) ? ['uses' => $action] : [
+            'uses' => $action[0].'@'.$action[1],
+            'controller' => $action[0].'@'.$action[1],
+        ];
+    }
+
+    // If no "uses" property has been set, we will dig through the array to find a
+    // Close instance within this list. We will set the first Closure we come
+    // across into the "uses" property that will get fired off by this route.
+    elseif (! isset($action['uses'])) {
+        $action['uses'] = static::findCallable($action);
+    }
+
+    if (is_string($action['uses']) && ! Str::contains($action['uses'], '@')) {
+        $action['uses'] = static::makeInvokable($action['uses']);
+    }
+
+    return $action;
+    }
+
+``` 
+
++) when registering a router in the code file (web.php), laravel parses the router into an object of Illuminate\Routing\Route, the object is stored in an array and will be checked to get the necessary information when there is an incoming request server:
+``` 
+// in fc protected function addToCollections($route)
+foreach ($route->methods() as $method) {
+    $this->routes[$method][$domainAndUri] = $route;
+}
+``` 
+
+## How to mapping request to server with router? (#HowToMappingRequestToServerWithRoute?)
+Simply put, laravel aggregates all the routes you subscribe to in an array (specifically in the previous section). Each request to the webserver, laravel parses request information and maping with array saved all router. </br>
+
+## Laravel handle all request with one endpoint.? (#LaravelHandleAllRequestWithOneEndpoint?)
+source index.php:
+``` 
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+$request = Illuminate\Http\Request::capture()
+);
+
+$response->send();
+
+$kernel->terminate($request, $response);
+``` 
+
+inside class Kernel: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Kernel.php <br>
+``` 
+/**
+* Handle an incoming HTTP request.
+*
+* @param \Illuminate\Http\Request $request
+* @return \Illuminate\Http\Response
+*/
+public function handle($request)
+{
+try {
+        $request->enableHttpMethodParameterOverride();
+
+        $response = $this->sendRequestThroughRouter($request);
+     } catch (Throwable $e) {
+            $this->reportException($e);
+
+            $response = $this->renderException($request, $e);
+        }
+
+        $this->app['events']->dispatch(
+            new RequestHandle($request, $response)
+        );
+
+        return $response;
+    }
+
+    /**
+     * Send the given request through the middleware/router.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    protected function sendRequestThroughRouter($request)
+    {
+        $this->app->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $this->bootstrap();
+
+        return (new Pipeline($this->app))
+                    ->send($request)
+                    ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+                    ->then($this->dispatchToRouter());
+    }
+``` 
+
+==> Laravel creates $kernel endpoint, all incoming requests will be handled at public function handle($request). This process includes many processes, but the most basic will be: find the corresponding callback acti, run the action callback, dispatch the corresponding events to be registered and handle http exception.
