@@ -695,7 +695,10 @@ try {
   - [How is mutex lock implement for many driver in Laravel?](#HowIsMutexLockImplementForManyDriverInLaravel)
   - [Dissect mutex lock in redis](#DissectMutexLockInRedis)
     - [How to algorithm of redis implement mutex lock?](#HowToRedisImplementMutexLock)
-    - [What is problem with distribute lock?](#WhatIsProblemWithDistributeLock)
+    - [What is distribute lock?](#WhatIsDistributeLock)
+    - [What is redlock?](#WhatIsRedlock)
+    - [Why RedLock is bad ideal with me?](#WhyRedLockIsBadIdealWithMe)
+    - [Best practice use mutex lock in redis](#BestPracticeUseMutexLockInRedis)
     - [How to Laravel implement theory of Redis?](#HowToLaravelImplementTheoryOfRedis)
       - [How to Laravel implement set mutex from Lua scripts?](#HowToLaravelImplementSetLuaScripts)
       - [How to Laravel implement release mutex form Lua scripts?](#HowToLaravelImplementSetLuaScripts)
@@ -1050,6 +1053,52 @@ ARGV[1] is randomly generated so it is the security of the function. Someone who
 ==>> with one instance redis, muxtex lock implementation is simple and without many problems.
 
 ## What is problem with distribute lock?  <a name="WhatIsProblemWithDistributeLock"></a>
+
+![](img/distribute_lock.png)
+
+Distribute lock is a distributed lock system plus verify lock consensus mechanism for the purpose of increasing system's lock tolerance 
+
+
+## What is redlock?  <a name="WhatIsRedlock"></a>
+Redlock is a distributed locking system on redis. Specifically the Redlock algorithm is implemented: http://antirez.com/news/77.
+A few libraries that implement redock: https://github.com/amyangfei/redlock-go...
+
+## Why RedLock is bad ideal with me?  <a name="WhyRedLockIsBadIdealWithMe"></a>
+Reasons for Redlock existence:
+
+In theory, on instance lock mutex will not be able to guarantee 100% integrity if it crashes, node replication may miss keys that have not been synchronized, miss lock. Redlock distributes a Lock to many independent masters node to increase fault tolerance. </br>
+
+Features redlock: </br>
+1) The number of Redis independent master nodes is 5, or greater, which is the recommended number for fault tolerance. </br>
+2) Redlock deploys distributed Redis node, these master nodes are completely independent of each other. </br>
+3) Redlock implements a consensus mechanism to verify who has the lock in case of rece condition or one of the nodes is inactive. </br>
+
+
+Points a mutex lock needs in a web app: </br>
+1) Speed and performance. Mutex lock is a problem born to solve a race condition, the above characteristics are required </br>
+2) High frequency load capacity </br>
+3) Stable </br>
+
+
+==> Extract bad ideals from radlock: </br>
+1) Redlock implements lock on many independent nodes, to get 1 lock, must go through lock verification in many clusters. In the event of an error, a consensus mechanism must be verified to determine which resource has a lock. All of these make Redlock slow, resource-intensive, and heavy to deploy, contrary to the first item (seed and performance) that a lock systemp needs in a web app. </br>
+2) Redlock distributes the lock among many master nodes for integrity purposes. You have 1000 get redlocks and you have 5 master nodes, under normal operating conditions you need a total of 5000 queries to complete this. The load the system is subjected to and the completion time is increased by 5 times. Affects item 2 (High frequency load capacity) </br>
+
+## Best practice use mutex lock in redis  <a name="BestPracticeUseMutexLockInRedis"></a>
+Redlock theory suggests that when the master node goes down, the replication node may not be able to synchronize with the lock, so a lock miss is possible. Downgrading the master node can happen quite a lot, especially when the demand fluctuates but the infrastructure cannot keep up. </br>
+
+Let's take a look at some lesser known features of mutex locking in web apps: </br>
+1) The number of keys is not much ==> A project usually has only a few to less than 100 keys for mutex lock. This key is often used in race condition problems, it won't be too much in most web apps. </br>
+2) Frequency of reading and writing is very high. ==> As analyzed, it appears in the race conditions problem, so the frequency of reading and writing will be very high. </br>
+3) Red lock data is one of the important data types, which must have high integrity requirements. </br>
+
+Solution for safe and performance mutex lock: </br>
+
+1) Each service only needs 1 master node and 1 replicate node for mutex lock. This node is independent from the redis cluster that holds the normal data. </br>
+2) The master cluster needs to have a large enough bandwidth, high qps tolerance threshold. </br>
+3) There is no need for a server with a lot of ram, because the mutex key is usually quite small, ram and cpu are mainly used for handling query to system. </br>
+4) Calculate the server to always run with low ram threshold, usually less than 30%, set an alert whenever over 50% ram and cpu </br>
+5) Each redis node running  Ec2 meidum can also set a threshold rqs 150 to 200 K qps, which is huge for most products. Mutex lock is used in race conditions, in real problems, to have race conditions exceeding 200 K qps requires a very large number of users. When the number of requests exceeds the threshold of one node, deploy the node to a cluster mode. </br>
 
 
 
