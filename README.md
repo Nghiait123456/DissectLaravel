@@ -703,14 +703,16 @@ try {
       - [How to Laravel implement set mutex from Lua scripts?](#HowToLaravelImplementSetLuaScripts)
       - [How to Laravel implement release mutex form Lua scripts?](#HowToLaravelImplementSetLuaScripts)
     - [Advantages and disadvantages of mutex lock redis?](#AdvantagesAndDisadvantagesOfMutexLockRedis?)
-    - [Best practice of mutex lock redis](#BestPractiveOfMutexLockRedis)
 
-    - [What is local in memory?](#WhatIsLocalInMemory)
-    - [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
-    - [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
-    - [Best practice  of local in memory with Laravel](#BestPracticeOfLocalInMemoryWithLaravel)
+  - [What is local in memory?](#WhatIsLocalInMemory)
+  - [What is type of local in memory?](#WhatIsTypefLocalInMemory)
+  - [When is use local in memory?](#WhatIsUseLocalInMemory?)
+  - [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
+  - [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
+ 
   - [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
-  - [Dissect Rate Limit Laravel](#Dissect Rate limit Laravel)
+  - [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
+  - [What is ddos?](#WhatIsDdos)
   - [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
   - [Best practice attack ddos ](#BestPracticeAttackDdos)
 
@@ -1100,6 +1102,347 @@ Solution for safe and performance mutex lock: </br>
 4) Calculate the server to always run with low ram threshold, usually less than 30%, set an alert whenever over 50% ram and cpu </br>
 5) Each redis node running  Ec2 meidum can also set a threshold rqs 150 to 200 K qps, which is huge for most products. Mutex lock is used in race conditions, in real problems, to have race conditions exceeding 200 K qps requires a very large number of users. When the number of requests exceeds the threshold of one node, deploy the node to a cluster mode. </br>
 
+
+## How to Laravel implement theory of Redis?  <a name="HowToLaravelImplementTheoryOfRedis"></a>
+## How to Laravel implement set mutex from Lua scripts?  <a name="HowToLaravelImplementSetLuaScripts"></a>
+
+In Abstract class: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Cache/Lock.php , Laravel implements an abstract class for every drive lock to follow:
+
+```
+    /**
+     * Attempt to acquire the lock.
+     *
+     * @param callable|null $callback
+     * @return mixed
+     */
+    public function get($callback = null)
+    {
+        $result = $this->acquire();
+
+        if ($result && is_callable($callback)) {
+            try {
+                return $callback();
+            } finally {
+                $this->release();
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Attempt to acquire the lock.
+     *
+     * @return bool
+     */
+    abstract public function acquire();
+```
+
+Laravel implements a public function get(), which takes the appropriate abstract fc acquire() for each cache driver. If you pass in a callback fc in callback, it will run the callback action and release the lock. If the callback is not passed, it will return a bool corresponding to whether the key was obtained or not. </br>
+
+How a key is implemented, let's dissect the example with redis. Print
+```
+ /**
+     * Attempt to acquire the lock.
+     *
+     * @return bool
+     */
+    public function acquire()
+    {
+        if ($this->seconds > 0) {
+            return $this->redis->set($this->name, $this->owner, 'EX', $this->seconds, 'NX') == true;
+        } else {
+            return $this->redis->setnx($this->name, $this->owner) === 1;
+        }
+    }
+
+// how to get $owner:
+    /**
+     * Create a new lock instance.
+     *
+     * @param string $name
+     * @param int $seconds
+     * @param string|null $owner
+     * @return void
+     */
+    public function __construct($name, $seconds, $owner = null)
+    {
+        if (is_null($owner)) {
+            $owner = Str::random();
+        }
+
+        $this->name = $name;
+        $this->owner = $owner;
+        $this->seconds = $seconds;
+    }
+```
+
+Simply, as demonstrated in #HowToRedisImplementMutexLock, Laravel run Lua script: </br>
+```
+ SET resource_name my_random_value NX PX time_expiry
+```
+resource_name is $this->name, my_random_value, my_random_value is $this->owner.
+
+
+## How to Laravel implement release mutex form Lua scripts?  <a name="HowToLaravelImplementSetLuaScripts"></a>
+Print Abstract class: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Cache/Lock.php
+
+```
+   
+    /**
+     * Release the lock.
+     *
+     * @return bool
+     */
+    abstract public function release();
+
+
+// print RedisLock.php
+
+    /**
+     * Release the lock.
+     *
+     * @return bool
+     */
+    public function release()
+    {
+        return (bool) $this->redis->eval(LuaScripts::releaseLock(), 1, $this->name, $this->owner);
+    }
+
+
+// print Luascripts:
+  /**
+     * Get the Lua script to atomically release a lock.
+     *
+     * KEYS[1] - The name of the lock
+     * ARGV[1] - The owner key of the lock instance trying to release it
+     *
+     * @return string
+     */
+    public static function releaseLock()
+    {
+        return <<<'LUA'
+if redis.call("get",KEYS[1]) == ARGV[1] then
+    return redis.call("del",KEYS[1])
+else
+    return 0
+end
+LUA;
+    }
+
+```
+
+Simply, as demonstrated in #HowToRedisImplementMutexLock, Laravel implements Lua:
+```
+if redis.call("get",KEYS[1]) == ARGV[1] then
+    return redis.call("del",KEYS[1])
+else
+    return 0
+end
+```
+As mentioned, this is an authen and verify step, only the owner of the key has the right to release the key, or have to wait until invalidate cache.  </br>
+
+
+## Advantages and disadvantages of mutex lock redis?  <a name="AdvantagesAndDisadvantagesOfMutexLockRedis"></a>
++) Advantages: </br>
+High performance: </br>
+This is one of the fastest shared lock systems, with medium servers, redis can handle hundreds of thousands of qps race conditions get lock mutex. This is a huge number for most products.
++) Disadvantages: </br>
+Integrity: </br>
+Redis is not a database for integrity, it is for performance. There is an option for data integrity but it no longer plays on the speed power of redis. If you use redis mutex lock for updating database inventory, update balance amount in DB, if you handle redis poorly, redis crash can lead to lost key locks, leading to data confusion. This never happens if you use locks and transactions at the database layer.
+
+
+
+# What is local in memory? <a name="WhatIsLocalInMemory"></a> 
+![](img/local_in_memory.png)
+
+In webapp, you are already familiar with a remote cache. Local in memory is a cache service similar to remote cache but implemented in local server run service, it has very high speed because it ignores network time. Simply put, in the same server you deploy backend service, you deploy a local cache on that same server to get the highest speed by ignoring network time.
+
+# What is type of local in memory? <a name="WhatIsTypefLocalInMemory"></a>
+This depends on the language:
+1) Languages have shared memory between processes: (golang, c, c++,...), they often local memory is part of the variable in that language. Lock and sync mechanisms are used for handling race conditions
+
+2) Language does not share memory between processes (php), they often implement 3rd party service cache on the same server as the running service. This method is less efficient than method 1.
+
+When is use local in memory?](#WhatIsUseLocalInMemory?)
+- [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
+- [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
+- [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
+- [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
+- [What is ddos?](#WhatIsDdos)
+- [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
+- [Best practice attack ddos ](#BestPracticeAttackDdos)_
+
+# When is use local in memory? <a name="WhatIsUseLocalInMemory"></a> 
+Use cases: </br>
+Data is repetitive, requires extremely low latency and the frequency of data changes is not large. Usually data config, data setup, data is quite large but very limited to change.
+# Implement local in memory with Laravel? <a name="ImplementLocalInMemoryWithLaravel"></a>
+Php is a language without shared memory. The common implementation is to use a 3rd party service cache. Specifically, with docker, you have 2 backend images and redis images, you deploy it in docker compose, each server run image deploys those 2 services.
+To update the new value, you need an event driven to update the data accordingly.
+
+# Advantages and disadvantages of local in memory with Laravel? <a name="AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel"></a>
+Ưu điểm: </br>
+Có được tốc độ cao nhất, cao hơn nhiều lần với cache remote. </br>
+Nhược điểm: </br>
+1) Tốn tài nguyên, mỗi instance sẽ phải mất tài nguyên chạy thêm một cache service local. </br>
+2) Việc triển khai và invalidate biến với event drive không phải dễ với các products không được đầu tư. </br>
+
+# What is algorithm rate limit? <a name="WhatIsAlgorithmRateLimit"></a>
+![](img/ratelimit_define.png)
+
+Simply, rate limit is a counter that helps to check the limit of a resource (request, query, ...). For each request to count, it increments the counter by 1 and checks with limited config.
+
+# Dissect Rate Limit Laravel <a name="DissectRateLimitLaravel"></a>
+print https://github.com/laravel/framework/blob/9.x/src/Illuminate/Cache/RateLimiter.php:
+```
+   /**
+     * Handle an incoming request.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
+     * @param int|string $maxAttempts
+     * @param float|int $decayMinutes
+     * @param string $prefix
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Illuminate\Http\Exceptions\ThrottleRequestsException
+     */
+    public function handle($request, Closure $next, $maxAttempts = 60, $decayMinutes = 1, $prefix = '')
+    {
+        $key = $prefix.$this->resolveRequestSignature($request);
+
+        $maxAttempts = $this->resolveMaxAttempts($request, $maxAttempts);
+
+        if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
+            throw $this->buildException($key, $maxAttempts);
+        }
+
+        $this->limiter->hit($key, $decayMinutes * 60);
+
+        $response = $next($request);
+
+        return $this->addHeaders(
+            $response, $maxAttempts,
+            $this->calculateRemainingAttempts($key, $maxAttempts)
+        );
+    }
+
+
+    /**
+     * Resolve the number of attempts if the user is authenticated or not.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int|string $maxAttempts
+     * @return int
+     */
+    protected function resolveMaxAttempts($request, $maxAttempts)
+    {
+        if (Str::contains($maxAttempts, '|')) {
+            $maxAttempts = explode('|', $maxAttempts, 2)[$request->user() ? ten];
+        }
+
+        if (! is_numeric($maxAttempts) && $request->user()) {
+            $maxAttempts = $request->user()->{$maxAttempts};
+        }
+
+        return (int) $maxAttempts;
+    }
+
+
+ /**
+     * Determine if the given key has been "accessed" too many times.
+     *
+     * @param string $key
+     * @param int $maxAttempts
+     * @return bool
+     */
+    public function tooManyAttempts($key, $maxAttempts)
+    {
+        if ($this->attempts($key) >= $maxAttempts) {
+            if ($this->cache->has($key.':timer')) {
+                return true;
+            }
+
+            $this->resetAttempts($key);
+        }
+
+        return false;
+    }
+
+    /**
+     * Increment the counter for a given key for a given decay time.
+     *
+     * @param string $key
+     * @param int $decaySeconds
+     * @return int
+     */
+    public function hit($key, $decaySeconds = 60)
+    {
+        $this->cache->add(
+            $key.':timer', $this->availableAt($decaySeconds), $decaySeconds
+        );
+
+        $added = $this->cache->add($key, 0, $decaySeconds);
+
+        $hits = (int) $this->cache->increment($key);
+
+        if (! $added && $hits == 1) {
+            $this->cache->put($key, 1, $decaySeconds);
+        }
+
+        return $hits;
+    }
+```
+
+For routers that implement a middeware rate limit, Laravel will implement a handle rate. RateLimiter is the main class, $this->cache is the corresponding drive cache passed by Laravel according to config. For each request, Laravel initializes the corresponding limit variable if it does not exist, and increments the counter variable by 1:
+```
+  $added = $this->cache->add($key, 0, $decaySeconds);
+```
+Laravel stores the timer interval as a flag marking the cache overate for the correct time interval. Laravel uses cache to control this, if this flag is still there then that rateLimit is still valid, this flag is cleared due to invalidate cache then rateLimit will also be reset:
+```
+  $this->cache->add(
+            $key.':timer', $this->availableAt($decaySeconds), $decaySeconds
+        );
+```
+Laravel update again on the first increment of value:
+```
+  if (! $added && $hits == 1) {
+            $this->cache->put($key, 1, $decaySeconds);
+        }
+```
+
+If the over limit condition is satisfied within the configed period, Laravel will catch it:
+```
+    public function tooManyAttempts($key, $maxAttempts)
+    {
+        if ($this->attempts($key) >= $maxAttempts) {
+            if ($this->cache->has($key.':timer')) {
+                return true;
+            }
+
+            $this->resetAttempts($key);
+        }
+
+        return false;
+    }
+```
+Laravel throws ex and blocks the request stream:
+```
+ if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
+            throw $this->buildException($key, $maxAttempts);
+        }
+```
+Everything ends when the config time is over, the variables reset to the original process và tiếp tục chạy từ start point.
+
+# What is ddos? <a name="WhatIsDdos"></a>
+
+![](img/ddos_define.png)
+
+Ddos is a form of denial of service attack. Attackers often use large amounts of resources, proxies and technologies that constantly change ip requests. It simply creates a very large request threshold that overloads the system's responsiveness causing the system to lose control and down.
+
+# Why do not use Rate limit laravel for attack ddos? <a name="WhyDoNotUseRateLimitLaravelForAttackDdos"></a>
+Let's analyze some Laravel rate limit features. Activity flow goes to the server, goes to the cache, updates the resulting config. With this feature, when being attacked by ddos, the attacker's requests still go into the server, go to the cache, handle and then be returned. This is very bad with ddos. Well, very quickly, bandwith or service backend or cache service, or all three, or extra services will be overloaded. Which one goes first depends on your project's context, but the project will definitely suffer. Remember one thing, never use larave ratelimit attack ddo. This is true for all technologies and languages, not just php. Remember not to let things go too far. Good luck.
 
 
 
