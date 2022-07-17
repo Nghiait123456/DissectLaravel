@@ -70,35 +70,42 @@ gmail: minhnghia.pham.it@gmail.com
     - [What is cache importance in webapp?](#WhyIsCacheImportanceInWebapp)
     - [What is cache in Laravel?](#WhatIsCacheInLaravel)
     - [What is type of cache in Laravel?](#WhatIsTypeOfCacheInLaravel)
+    - [Best practice when use driver cache?](#BestPracticeWhenUseDriverCache)
     - [Contracts cache](#ContractsCache)
     - [Dissect cache](#DissectCache)
       - [How to Repository cache in Laravel work?](#HowToRepositoryCacheInLaravelWork)
+        - [How is Laravel get value of one key?](#HowIsLaravelGetValueOfOneKey)
+        - [How is Laravel push value to one key?](#HowIsLaravelPushValueToOneKey)
       - [How to Laravel implement one instance cache?](#HowToLaravelImplementOneInstanceCache)
-      - [How to Laravel Redis driver convert to Lua script?](#HowToLaravelRedisDriverConvertToLuascript)
       - [How to Laravel implement one endpoint call Cache from CacheManager?](#HowToLaravelImplementOneEndpointCallCacheFromCacheManager)
         - [How to Facades Cache bind and what bind?](#HowToFacadesCacheBindAndWhatBind)
         - [How to CacheManager mapping to one driver cache?](#HowToCacheManagerMappingToOneDriverCache)
         - [Call static auto mapping in CacheManager?](#CallStaticAutoMappingInCacheManager)
-      - [Best practice when use driver cache?](#BestPracticeWhenUseDriverCache)
-      - [What is muxtex lock?](#WhatIsMuxtexLock)
-      - [How is mutex lock implement for many driver in Laravel ?](#HowIsMutexLockImplementForManyDriverInLaravel)
+
+    - [What is muxtex lock?](#WhatIsMuxtexLock)
+    - [How is mutex lock implement for many driver in Laravel?](#HowIsMutexLockImplementForManyDriverInLaravel)
     - [Dissect mutex lock in redis](#DissectMutexLockInRedis)
-      - [Dissect mutex lock in redis](#DissectMutexLockInRedis)
-      - [How to algorithm of redis implement mutext lock?](#HowToRedisImplementMutexLock)
+      - [How to algorithm of redis implement mutex lock?](#HowToRedisImplementMutexLock)
+      - [What is distribute lock?](#WhatIsDistributeLock)
+      - [What is redlock?](#WhatIsRedlock)
+      - [Why RedLock is bad ideal with me?](#WhyRedLockIsBadIdealWithMe)
+      - [Best practice use mutex lock in redis](#BestPracticeUseMutexLockInRedis)
       - [How to Laravel implement theory of Redis?](#HowToLaravelImplementTheoryOfRedis)
         - [How to Laravel implement set mutex from Lua scripts?](#HowToLaravelImplementSetLuaScripts)
         - [How to Laravel implement release mutex form Lua scripts?](#HowToLaravelImplementSetLuaScripts)
       - [Advantages and disadvantages of mutex lock redis?](#AdvantagesAndDisadvantagesOfMutexLockRedis?)
-      - [Best practice of mutex lock redis](#BestPractiveOfMutexLockRedis)
 
-      - [What is local in memory?](#WhatIsLocalInMemory)
-      - [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
-      - [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
-      - [Best practice  of local in memory with Laravel](#BestPracticeOfLocalInMemoryWithLaravel)
+    - [What is local in memory?](#WhatIsLocalInMemory)
+    - [What is type of local in memory?](#WhatIsTypefLocalInMemory)
+    - [When is use local in memory?](#WhatIsUseLocalInMemory?)
+    - [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
+    - [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
     - [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
-    - [Dissect Rate Limit Laravel](#Dissect Rate limit Laravel)
+    - [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
+    - [What is ddos?](#WhatIsDdos)
     - [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
-    - [Best practice attack ddos ](#BestPracticeAttackDdos)
+    - [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
+    - [Best practice in flash sales?](#BestPracticeInFlashSales)
       
 
 
@@ -728,13 +735,12 @@ try {
   - [When is use local in memory?](#WhatIsUseLocalInMemory?)
   - [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
   - [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
- 
   - [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
   - [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
   - [What is ddos?](#WhatIsDdos)
   - [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
-  - [Best practice attack ddos ](#BestPracticeAttackDdos)
-  - [Best practice use rate limit in flash sales](#BestPracticeUseRateLimitInFlashSales)
+  - [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
+  - [Best practice in flash sales?](#BestPracticeInFlashSales)
 
 
 
@@ -1284,17 +1290,6 @@ This depends on the language:
 1) Languages have shared memory between processes: (golang, c, c++,...), they often local memory is part of the variable in that language. Lock and sync mechanisms are used for handling race conditions
 
 2) Language does not share memory between processes (php), they often implement 3rd party service cache on the same server as the running service. This method is less efficient than method 1.
-
-When is use local in memory?](#WhatIsUseLocalInMemory?)
-- [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
-- [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
-- [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
-- [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
-- [What is ddos?](#WhatIsDdos)
-- [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
-- [Best practice prevent attack ddos ](#BestPracticePreventAttackDdos)
-- [Best practice in flash sales?](#BestPracticeInFlashSales)
-
 
 # When is use local in memory? <a name="WhatIsUseLocalInMemory"></a> 
 Use cases: </br>
