@@ -14,8 +14,50 @@ All copyrights of the material belong to me. You can read, use, share for many p
 # Contacts
 gmail: minhnghia.pham.it@gmail.com
 
-# Quick Look (HowTo):
-- [Overview and layout sourcecode Laravel](https://github.com/Nghiait123456/DissectLaravel#LayoutLaravel)
+# Quick view and highlight:
+(If you want to go fast, use the quick view menu, it has highlight meny. But I recommend learning in order, the components I talk about are logically related to each other. Read in order you will have a system. more clear. However, how you read is up to your preference. Here we go)
+
+- [How To Understand Big Project](#HowToUnderstandBigProject)
+- [When save file in public folder ](#WhenSaveFileInPublicFolder)
+- [How to dissect Laravel source](#HowToDisectLaravelSource)
+- [Dissect session in laravel](#DissectSessionInLaravel)
+- [Best practice Csrf Laravel](#BestPracticeCsrfLaravel)
+- [Best practice Xss](#BestPracticeXss)
+- [Why are there many type token, accessToken, refreshToken, What is their main purpose?](#WhatIsTheirMainPurposeManyTypeToken)
+- [Where save token in browser, what is best practice?](#WhereSaveToken)
+- [How do ajax,... work with Http only cookie?](#AjaxHttpOnlyCookie)
+- [Why framework frontend often use local store for save token?](#WhyFrameworkFrontEndOfternUserLocalStoreForSaveToken)
+- [Preview type Http server](#PreviewTypeHttpServer)
+- [Why  are there so many webserver models?](#WhyAreThereSoManyWebserverModels?)
+- [Why is the webServer model constantly changing?](#WhyIsTheWebServerModelConstantlyChanging?)
+- [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
+- [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
+- [Preview contracts in http modules](#PreviewContractsInHttpModules)
+- [Dissect http and routing modules](#DissectHttpAndRoutingModules)
+- [Best practice when use driver cache?](#BestPracticeWhenUseDriverCache)
+- [Contracts cache](#ContractsCache)
+- [Dissect cache](#DissectCache)
+- [What is muxtex lock?](#WhatIsMuxtexLock)
+- [How is mutex lock implement for many driver in Laravel?](#HowIsMutexLockImplementForManyDriverInLaravel)
+- [Dissect mutex lock in redis](#DissectMutexLockInRedis)
+- [How to algorithm of redis implement mutex lock?](#HowToRedisImplementMutexLock)
+- [What is distribute lock?](#WhatIsDistributeLock)
+- [What is redlock?](#WhatIsRedlock)
+- [Why RedLock is bad ideal with me?](#WhyRedLockIsBadIdealWithMe)
+- [Best practice use mutex lock in redis](#BestPracticeUseMutexLockInRedis)
+- [How to Laravel implement theory of Redis?](#HowToLaravelImplementTheoryOfRedis)
+- [What is local in memory?](#WhatIsLocalInMemory)
+- [What is type of local in memory?](#WhatIsTypefLocalInMemory)
+- [When is use local in memory?](#WhatIsUseLocalInMemory?)
+- [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
+- [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
+- [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
+- [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
+- [What is ddos?](#WhatIsDdos)
+- [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
+- [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
+- [Best practice in flash sales?](#BestPracticeInFlashSales)
+
 
 
 # Table of Contents
