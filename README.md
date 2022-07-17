@@ -48,8 +48,10 @@ gmail: minhnghia.pham.it@gmail.com
       - [Xss Security Define](#XssSecurityDefine)
       - [Prevention Xss](#PreventionXss)
       - [Best practice Xss](#BestPracticeXss)
-      - [Where save token in browser](#WhereSaveToken)
-        - [How to ajax,... work with Http only cookie](#AjaxHttpOnlyCookie)
+      - [Why are there many type token, accessToken, refreshToken, What is their main purpose?](#WhatIsTheirMainPurposeManyTypeToken)
+      - [Where save token in browser, what is best practice?](#WhereSaveToken)
+        - [How do ajax,... work with Http only cookie?](#AjaxHttpOnlyCookie)
+        - [Why framework frontend often use local store for save token?](#WhyFrameworkFrontEndOfternUserLocalStoreForSaveToken)
 
   - [Http and Routing](#HttpAndRouting)
     - [Preview type Http server](#PreviewTypeHttpServer)
@@ -420,7 +422,19 @@ In my way, best practice prevent Xss:
 +) Http Only cookies, Http Same Site Origin cookies
 
 
-## Where save token in browser <a name="WhereSaveToken"></a> 
+## Why are there many type token, accessToken, refreshToken, What is their main purpose? <a name="WhatIsTheirMainPurposeManyTypeToken"></a>
+This is a question that has a lot of opinions and I really haven't found a convincing answer. This is why I had to go answer it myself. The main reason is to increase security, reduce the disclosure of important information. </br>
+
+Let me explain it with an example: </br>
+
+You have 4 bills of 1$, 5$, 100$ and 500$. You need to circulate this coin for the system to work properly. Thieves can stalk and steal money at any time. You will choose how to rotate to reduce risk the most. </br>
+
+From the theory of statistical probability, there will be a very simple thought, rotate the small coin as many times as possible, the large coin as few times as possible. This simple thinking will also apply to tokens. </br>
+
+Imagine 1$ is OauthToken, 5$ is accessToken, 100$ is refreshToken, 500$ is user + pass + otp. You see, tokens are clearly differentiated by token value, the rights you get from that token. Users will only use tokens that are suitable for their needs, not too large tokens for too small needs. Never pass OAuth with : user + pass + otp, that's stupid. </br>
+
+==> Obviously, the differentiation and creation of many types of tokens have helped to use tokens in the right context, have reduced the risk of leaking important information of the system, contributing to increasing the overall security. Note that the probability of exposing a token it does not depend on the type of token, but on the frequency of use of that token. Please use the right token for the right purpose. </br>
+## Where save token in browser, what is best practice? <a name="WhereSaveToken"></a> 
 Where to save tokens in browser? This is classic Q/A? </br>
 There are countless answers and countless approaches. For me when approaching in the direction of security and performance, it my way: </br>
 +) token always save in cookie with http only, security, same site,... </br>
@@ -428,7 +442,7 @@ There are countless answers and countless approaches. For me when approaching in
 
 But, In Mode Http only, js don't get cookies. So, how to call ajax, ... or same tool to request to server. Please check next part. </br>
 
-## How to ajax,... work with Http only cookie <a name="AjaxHttpOnlyCookie"></a> 
+## How do ajax,... work with Http only cookie <a name="AjaxHttpOnlyCookie"></a> 
 This is problem: token (jwt token) default don't verify from cookie. Token is stateless, in app or end point, it is usually passed to header. But in broswer, in part: #WhereSaveToken, i suggest token should be stored http only cookie. </br>
 
 How to pass jwt verify when js don't get cookies in http only mode? </br>
@@ -444,6 +458,10 @@ https://medium.com/lightrail/getting-token-authentication-right-in-a-stateless-s
 Simple way, leave that to the backend. All you need to do is create a middleware, middleware job is to check exist jwt in header, if not exits, it's auto copy jwt from cookie to header. If done, it's return and allow next handle. </br>
 This solution work for all browser and all tool call api. Great !!!
 ```
+## Why framework frontend often use local store for save token? <a name="WhyFrameworkFrontEndOfternUserLocalStoreForSaveToken"></a>
+First, it is an unsafe way. As I have analyzed in the previous sections as well as all the leading security organizations in the world recommend, save tokens in cookies.
+
+So why does the frontend framework do that? The problem here is trade-off and convenience. They sacrifice security for convenience. Specifically, if the token is stored in the local store, they do not need a solution backend for verifying the token in the cookie, they will run their frame independently according to the token standard, they can easily get the token and pass to ajax, fetch. They know it's less secure, but it's a trade-off. I see a lot of blocker explaining that they store in the local store is secure enough, they are good people and they know what is secure,... It's all just an excuse for the fact that the block writer doesn't understand deeply about it. Base yourself on the deepest theory, not on the basis of the majority.
 
 
 ## Http and Routing <a name="HttpAndRouting"></a>
