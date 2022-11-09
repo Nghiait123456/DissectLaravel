@@ -55,7 +55,7 @@ gmail: minhnghia.pham.it@gmail.com
 - [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
 - [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
 - [Best practice in flash sales?](#BestPracticeInFlashSales)
-
+- [To do](#Todo)
 
 
 # Table of Contents
@@ -144,7 +144,7 @@ gmail: minhnghia.pham.it@gmail.com
     - [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
     - [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
     - [Best practice in flash sales?](#BestPracticeInFlashSales)
-      
+  - [To do](#Todo)     
 
 
 ## How To Understand Big Project <a name="HowToUnderstandBigProject"></a>
@@ -736,49 +736,6 @@ try {
 ``` 
 
 ==> Laravel creates $kernel endpoint, all incoming requests will be handled at public function handle($request). This process includes many processes, but the most basic will be: find the corresponding callback acti, run the action callback, dispatch the corresponding events to be registered and handle http exception.
-
-
-- [Cache](#Cache)
-  - [What is cache?](#WhatIsCache)
-  - [What is cache importance in webapp?](#WhyIsCacheImportanceInWebapp)
-  - [What is cache in Laravel?](#WhatIsCacheInLaravel)
-  - [What is type of cache in Laravel?](#WhatIsTypeOfCacheInLaravel)
-  - [Best practice when use driver cache?](#BestPracticeWhenUseDriverCache)
-  - [Contracts cache](#ContractsCache)
-  - [Dissect cache](#DissectCache)
-    - [How to Repository cache in Laravel work?](#HowToRepositoryCacheInLaravelWork)
-      - [How is Laravel get value of one key?](#HowIsLaravelGetValueOfOneKey)
-      - [How is Laravel push value to one key?](#HowIsLaravelPushValueToOneKey)
-    - [How to Laravel implement one instance cache?](#HowToLaravelImplementOneInstanceCache)
-    - [How to Laravel implement one endpoint call Cache from CacheManager?](#HowToLaravelImplementOneEndpointCallCacheFromCacheManager)
-      - [How to Facades Cache bind and what bind?](#HowToFacadesCacheBindAndWhatBind)
-      - [How to CacheManager mapping to one driver cache?](#HowToCacheManagerMappingToOneDriverCache)
-      - [Call static auto mapping in CacheManager?](#CallStaticAutoMappingInCacheManager)
-    
-  - [What is muxtex lock?](#WhatIsMuxtexLock)
-  - [How is mutex lock implement for many driver in Laravel?](#HowIsMutexLockImplementForManyDriverInLaravel)
-  - [Dissect mutex lock in redis](#DissectMutexLockInRedis)
-    - [How to algorithm of redis implement mutex lock?](#HowToRedisImplementMutexLock)
-    - [What is distribute lock?](#WhatIsDistributeLock)
-    - [What is redlock?](#WhatIsRedlock)
-    - [How to Laravel implement theory of Redis?](#HowToLaravelImplementTheoryOfRedis)
-      - [How to Laravel implement set mutex from Lua scripts?](#HowToLaravelImplementSetLuaScripts)
-      - [How to Laravel implement release mutex form Lua scripts?](#HowToLaravelImplementSetLuaScripts)
-    - [Advantages and disadvantages of mutex lock redis?](#AdvantagesAndDisadvantagesOfMutexLockRedis?)
-
-  - [What is local in memory?](#WhatIsLocalInMemory)
-  - [What is type of local in memory?](#WhatIsTypefLocalInMemory)
-  - [When is use local in memory?](#WhatIsUseLocalInMemory?)
-  - [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
-  - [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
-  - [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
-  - [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
-  - [What is ddos?](#WhatIsDdos)
-  - [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
-  - [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
-  - [Best practice in flash sales?](#BestPracticeInFlashSales)
-
-
 
 
 ## Cache <a name="Cache"></a>
@@ -1490,3 +1447,7 @@ What this 3rd party tool needs to ensure: only requests within the computational
 The 3rd party that does a good job of catching water with buckets can say: rate limit Cloudflare, rate limit apiGateway AWS, rate limit WAF AWS,... It can be any party if it meets the conditions I have specified. accumulate. Specifically I have a repo to verify this: </br>
 2) Minimum condition principle: </br>
    This is related to the specific project, I do not mention here. This principle helps you to find the system's key service, it is the bottleneck of the system. This helps you calculate the exact rate limit number. </br>
+
+
+# To do? <a name="Todo"></a>
+I have dissect the most important and essential modules of Laravel. It is the module that any frame has required. But right now, I don't have enough time and resources to maintain this project. If you have a need to contribute or want me to dissect any more modules, please contribute or suggest me. When I have more time, I will come back to it. </br>
