@@ -289,12 +289,15 @@ in SessionMager, Laravel implements abstract public function getDefaultDriver() 
 
 How to laravel implement all driver and wrap it in code. After getting instance for session config in system, Laravel pass instance to :
 https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L57-L62
+```
 public function __construct($name, SessionHandlerInterface $handler, $id = null)
 {
-$this->setId($id);
-$this->name = $name;
-$this->handler = $handler;
+  $this->setId($id);
+  $this->name = $name;
+  $this->handler = $handler;
 }
+```
+
 The SessionHandlerInterface represents one of the drives that Laravel has. The rest of the functions of the Store.php class are a wrapper for the SessionHandlerInterface. </br>
 
 +) In drive: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/CacheBasedSessionHandler.php, it implements the most basic functions like get(), set(), distroy (). Session in laravel with any drive is saved to a session key, this operation is quite simple. </br>
@@ -312,12 +315,12 @@ In short, user after authen success, hacker trick user into interacting with a p
 
 ## Prevention Csrf <a name="PreventionCsrf"></a> 
 Prevention Csrf:
-Starting from the CSRF definition, i have prevention way:
+Starting from the CSRF definition, i have prevention way: </br>
 +) Use Same Site Flag Cookie : cookie will only be sent from request originating from 1 domain, hacker attack but request reject beacause fail authen. </br>
 
-+) Crsf Token: will explain in next part
++) Crsf Token: will explain in next part </br>
 
-+) Open mode check CORS : it's bad solution, why it changes very much business. It's just only good solution when web wants open check CORS(not for prevention CSRF, for business)
++) Open mode check CORS : it's bad solution, why it changes very much business. It's just only good solution when web wants open check CORS(not for prevention CSRF, for business) </br>
 
 
 ## Csrf Token Define <a name="CrsfTokenDefines"></a>
@@ -376,7 +379,7 @@ https://github.com/laravel/framework/blob/7.x/src/Illuminate/Session/Store.php#L
         $this->put('_token', Str::random(40));
     } </br>
 ``` 
-CSRF token in laravel create by randon str. It's simple way why token don't contain data insight. CSRF token only one task, check macth CRSF token with form submit.
+CSRF token in laravel create by randon str. It's simple way why token don't contain data insight. CSRF token only one task, check macth CRSF token with form submit. </br>
 +) How to Laravel save CSRF cookies?
 View code :
 https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php#L78-L82 </br>
@@ -462,7 +465,7 @@ How to Prevent Xss: </br>
 +) Open mode check CORS in backend(not good solution) </br>
 
 ## Best practice Xss <a name="BestPracticeXss"></a> 
-In my way, best practice prevent Xss:
+In my way, best practice prevent Xss: </br>
 +) Actively filter data Xss after save
 +) Http Only cookies, Http Same Site Origin cookies
 
@@ -561,8 +564,6 @@ There are many languages and backend approaches, each of which needs to have som
 ## Why is the webServer model constantly changing? <a name="WhyIsTheWebServerModelConstantlyChanging?"></a>
 Languages and technologies change constantly, so do web servers. But keep in mind that the ultimate goal of webserver improvement is usually to increase more than the amount of rps that can be handled in a server. </br>
 ##  Preview contracts in http modules <a name="PreviewContractsInHttpModules"></a>
-    - [Why  are there so many webserver models?](#WhyAreThereSoManyWebserverModels?)
-    - [Why is the webServer model constantly changing?](#WhyIsTheWebServerModelConstantlyChanging?)
 ## Dissect http and routing modules <a name="DissectHttpAndRoutingModules"></a>
 ## How to register one router work? <a name="HowToRegisterOneRouterWork?"></a>  
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Routing/Router.php, preview one router get: </br>
@@ -1254,11 +1255,11 @@ Php is a language without shared memory. The common implementation is to use a 3
 To update the new value, you need an event driven to update the data accordingly.
 
 # Advantages and disadvantages of local in memory with Laravel? <a name="AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel"></a>
-Ưu điểm: </br>
-Có được tốc độ cao nhất, cao hơn nhiều lần với cache remote. </br>
-Nhược điểm: </br>
-1) Tốn tài nguyên, mỗi instance sẽ phải mất tài nguyên chạy thêm một cache service local. </br>
-2) Việc triển khai và invalidate biến với event drive không phải dễ với các products không được đầu tư. </br>
+Advantages: </br>
+Get the highest speed, many times higher with cache remote. </br>
+Cons: </br>
+1) Resource consuming, each instance will have to take resources to run an additional local cache service. </br>
+2) Deploying and invalidating variables with event drive is not easy with uninvested products. </br>
 
 # What is algorithm rate limit? <a name="WhatIsAlgorithmRateLimit"></a>
 ![](img/ratelimit_define.png)
