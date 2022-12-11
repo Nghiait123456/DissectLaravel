@@ -43,136 +43,134 @@ gmail: minhnghia.pham.it@gmail.com
 components I talk about are logically related to each other. Read in order you will have a system. more clear. However,
 how you read is up to your preference. Here we go)
 
-- [How To Understand Big Project](#HowToUnderstandBigProject)
-- [When save file in public folder ](#WhenSaveFileInPublicFolder)
-- [How to dissect Laravel source](#HowToDisectLaravelSource)
-- [Dissect session in laravel](#DissectSessionInLaravel)
-- [Best practice Csrf Laravel](#BestPracticeCsrfLaravel)
-- [Best practice Xss](#BestPracticeXss)
-- [Why are there many type token, accessToken, refreshToken, What is their main purpose?](#WhatIsTheirMainPurposeManyTypeToken)
-- [Where save token in browser, what is best practice?](#WhereSaveToken)
-- [How do ajax,... work with Http only cookie?](#AjaxHttpOnlyCookie)
-- [Why framework frontend often use local store for save token?](#WhyFrameworkFrontEndOfternUserLocalStoreForSaveToken)
-- [Preview type Http server](#PreviewTypeHttpServer)
-- [Why  are there so many webserver models?](#WhyAreThereSoManyWebserverModels?)
-- [Why is the webServer model constantly changing?](#WhyIsTheWebServerModelConstantlyChanging?)
-- [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
-- [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
-- [Preview contracts in http modules](#PreviewContractsInHttpModules)
-- [Dissect http and routing modules](#DissectHttpAndRoutingModules)
-- [Best practice when use driver cache?](#BestPracticeWhenUseDriverCache)
-- [Contracts cache](#ContractsCache)
-- [Dissect cache](#DissectCache)
-- [What is muxtex lock?](#WhatIsMuxtexLock)
-- [How is mutex lock implement for many driver in Laravel?](#HowIsMutexLockImplementForManyDriverInLaravel)
-- [Dissect mutex lock in redis](#DissectMutexLockInRedis)
-- [How to algorithm of redis implement mutex lock?](#HowToRedisImplementMutexLock)
-- [What is distribute lock?](#WhatIsDistributeLock)
-- [What is redlock?](#WhatIsRedlock)
-- [How to Laravel implement theory of Redis?](#HowToLaravelImplementTheoryOfRedis)
-- [What is local in memory?](#WhatIsLocalInMemory)
-- [What is type of local in memory?](#WhatIsTypefLocalInMemory)
-- [When is use local in memory?](#WhatIsUseLocalInMemory?)
-- [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
-- [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
-- [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
-- [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
-- [What is ddos?](#WhatIsDdos)
-- [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
-- [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
-- [Best practice in flash sales?](#BestPracticeInFlashSales)
-- [To do](#Todo)
+- [How To Understand Big Project](#how_to_understand_big_project)
+- [When save file in public folder ](#when_save_file_in_public_folder)
+- [How to dissect Laravel source](#how_to_disect_laravel_source)
+- [Dissect session in laravel](#dissect_session_in_laravel)
+- [Best practice Xss](#best_practice_xss)
+- [Why are there many type token, accessToken, refreshToken, What is their main purpose?](#what_is_their_main_purpose_many_type_token)
+- [Where save token in browser, what is best practice?](#where_save_token)
+- [How do ajax,... work with Http only cookie?](#ajax_http_only_cookie)
+- [Why framework frontend often use local store for save token?](#why_framework_front_end_oftern_user_local_store_for_save_token)
+- [Preview type Http server](#preview_type_http_server)
+- [Why  are there so many webserver models?](#why_are_there_so_many_webserver_models?)
+- [Why is the webServer model constantly changing?](#why_is_the_web_server_model_constantly_changing?)
+- [What is trending in Http server?](#what_is_trending_in_http_server?)
+- [Type http server in Php and Laravel](#type_http_server_in_php_and_laravel)
+- [Preview contracts in http modules](#preview_contracts_in_http_modules)
+- [Dissect http and routing modules](#dissect_http_and_routing_modules)
+- [Best practice when use driver cache?](#best_practice_when_use_driver_cache)
+- [Contracts cache](#contracts_cache)
+- [Dissect cache](#dissect_cache)
+- [What is muxtex lock?](#what_is_muxtex_lock)
+- [How is mutex lock implement for many driver in Laravel?](#how_is_mutex_lock_implement_for_many_driver_in_laravel)
+- [Dissect mutex lock in redis](#dissect_mutex_lock_in_redis)
+- [How to algorithm of redis implement mutex lock?](#how_to_redis_implement_mutex_lock)
+- [What is distribute lock?](#what_is_distribute_lock)
+- [What is redlock?](#what_is_redlock)
+- [How to Laravel implement theory of Redis?](#how_to_laravel_implement_theory_of_redis)
+- [What is local in memory?](#what_is_local_in_memory)
+- [What is type of local in memory?](#what_is_typef_local_in_memory)
+- [When is use local in memory?](#when_is_use_local_in_memory?)
+- [Implement local in memory with Laravel?](#implement_local_in_memory_with_laravel)
+- [Advantages and disadvantages of local in memory with Laravel?](#advantages_and_disadvantages_of_local_in_memory_with_laravel)
+- [What is algorithm rate limit?](#what_is_algorithm_rate_limit)
+- [Dissect Rate Limit Laravel](#dissect_rate_limit_laravel)
+- [What is ddos?](#what_is-ddos)
+- [Why do not use Rate limit laravel for attack ddos?](#why_do_not_use_rate_limit_laravel_for_attack_ddos)
+- [Best practice prevent attack ddos](#best_practice_prevent_attack_ddos)
+- [Best practice in flash sales?](#best_practice_in_flash_sales)
+- [To do](#todo)
 
 # Table of Contents
 
-- [How To Understand Big Project](#HowToUnderstandBigProject)
-- [Preview Laravel Layout](#LayoutLaravel)
-    - [Php and index.php ](#PhpAndIndexPhp)
-    - [index.php in laravel ](#IndexPhpLaravel)
-    - [Public folder in laravel ](#PublicFolderIndexPhpLaravel)
-    - [When save file in public folder ](#WhenSaveFileInPublicFolder)
-    - [How to dissect Laravel source](#HowToDisectLaravelSource)
+- [How To Understand Big Project](#how_to_understand_big_project)
+- [Preview Laravel Layout](#layout_laravel)
+    - [Php and index.php ](#php_and_index_php)
+    - [index.php in laravel ](#index_php_laravel)
+    - [Public folder in laravel ](#public_folder_index_php_laravel)
+    - [When save file in public folder ](#when_save_file_in_public_folder)
+    - [How to dissect Laravel source](#how_to_disect_laravel_source)
 
-- [Modules](#Modul)
-    - [Session](#Session)
-        - [Define session](#DefineSession)
-        - [Session in current web app](#SessionInCurrentWebApp)
-        - [Session default in php is not good](#DefaultSSPhpNotGood)
-        - [Session in laravel](#SessionInLaravel)
-        - [Preview session in laravel](#PreviewSessionInLaravel)
-        - [Dissect session in laravel](#DissectSessionInLaravel)
-            - [Concat session](#ConcatSession)
-            - [Detail session](#DetailSession)
-        - [Csrf](#Csrf)
-            - [Csrf Security Define](#CsrfSecurityDefine)
-            - [Prevention Csrf](#PreventionCsrf)
-            - [Csrf Token Define](#CrsfTokenDefines)
-            - [Why Don't Use Crsf For GET Method](#DontUseCsrfForGetMethod)
-            - [Csrf Token Laravel](#CrsfTokenLaravel)
-            - [Best practice Csrf Laravel](#BestPracticeCsrfLaravel)
-        - [Xss](#Xss)
-            - [Xss Security Define](#XssSecurityDefine)
-            - [Prevention Xss](#PreventionXss)
-            - [Best practice Xss](#BestPracticeXss)
-            - [Why are there many type token, accessToken, refreshToken, What is their main purpose?](#WhatIsTheirMainPurposeManyTypeToken)
-            - [Where save token in browser, what is best practice?](#WhereSaveToken)
-                - [How do ajax,... work with Http only cookie?](#AjaxHttpOnlyCookie)
-                - [Why framework frontend often use local store for save token?](#WhyFrameworkFrontEndOfternUserLocalStoreForSaveToken)
+- [Modules](#modul)
+    - [Session](#session)
+        - [Define session](#define_session)
+        - [Session in current web app](#session_in_current_web_app)
+        - [Session default in php is not good](#default_ss_php_not_good)
+        - [Session in laravel](#session_in_laravel)
+        - [Preview session in laravel](#preview_session_in_laravel)
+        - [Dissect session in laravel](#dissect_session_in_laravel)
+            - [Concat session](#concat_session)
+            - [Detail session](#detail_session)
+        - [Csrf](#csrf)
+            - [Csrf Security Define](#csrf_security_define)
+            - [Prevention Csrf](#prevention_csrf)
+            - [Csrf Token Define](#crsf_token_defines)
+            - [Why Don't Use Crsf For GET Method](#dont_use_csrf_for_get_method)
+            - [Csrf Token Laravel](#crsf_token_laravel)
+        - [Xss](#xss)
+            - [Xss Security Define](#xss_security_define)
+            - [Prevention Xss](#prevention_xss)
+            - [Best practice Xss](#best_practice_xss)
+            - [Why are there many type token, accessToken, refreshToken, What is their main purpose?](#what_is_their_main_purpose_many_type_token)
+            - [Where save token in browser, what is best practice?](#where_save_token)
+                - [How do ajax,... work with Http only cookie?](#ajax_http_only_cookie)
+                - [Why framework frontend often use local store for save token?](#why_framework_front_end_oftern_user_local_store_for_save_token)
 
-    - [Http and Routing](#HttpAndRouting)
-        - [Preview type Http server](#PreviewTypeHttpServer)
-        - [Why  are there so many webserver models?](#WhyAreThereSoManyWebserverModels?)
-        - [Why is the webServer model constantly changing?](#WhyIsTheWebServerModelConstantlyChanging?)
-        - [What is trending in Http server?](#WhatIsTrendingInHttpServer?)
-        - [Type http server in Php and Laravel](#TypeHttpServerInPhpAndLaravel)
-        - [Preview contracts in http modules](#PreviewContractsInHttpModules)
-        - [Dissect http and routing modules](#DissectHttpAndRoutingModules)
-            - [How to register one router work?](#HowToRegisterOneRouterWork?)
-            - [How to mapping request to server with router?](#HowToMappingRequestToServerWithRoute?)
-            - [Laravel handle all request with one endpoint](#LaravelHandleAllRequestWithOneEndpoint)
+    - [Http and Routing](#http_and_routing)
+        - [Preview type Http server](#preview_type_http_server)
+        - [Why  are there so many webserver models?](#why_are_there_so_many_webserver_models?)
+        - [Why is the webServer model constantly changing?](#why_is_the_web_server_model_constantly_changing?)
+        - [What is trending in Http server?](#what_is_trending_in_http_server?)
+        - [Type http server in Php and Laravel](#type_http_server_in_php_and_laravel)
+        - [Preview contracts in http modules](#preview_contracts_in_http_modules)
+        - [Dissect http and routing modules](#dissect_http_and_routing_modules)
+            - [How to register one router work?](#how_to_register_one_router_work?)
+            - [How to mapping request to server with router?](#how_to_mapping_request_to_server_with_route?)
+            - [Laravel handle all request with one endpoint](#laravel_handle_all_request_with_one_endpoint)
 
-    - [Cache](#Cache)
-        - [What is cache?](#WhatIsCache)
-        - [What is cache importance in webapp?](#WhyIsCacheImportanceInWebapp)
-        - [What is cache in Laravel?](#WhatIsCacheInLaravel)
-        - [What is type of cache in Laravel?](#WhatIsTypeOfCacheInLaravel)
-        - [Best practice when use driver cache?](#BestPracticeWhenUseDriverCache)
-        - [Contracts cache](#ContractsCache)
-        - [Dissect cache](#DissectCache)
-            - [How to Repository cache in Laravel work?](#HowToRepositoryCacheInLaravelWork)
-                - [How is Laravel get value of one key?](#HowIsLaravelGetValueOfOneKey)
-                - [How is Laravel push value to one key?](#HowIsLaravelPushValueToOneKey)
-            - [How to Laravel implement one instance cache?](#HowToLaravelImplementOneInstanceCache)
-            - [How to Laravel implement one endpoint call Cache from CacheManager?](#HowToLaravelImplementOneEndpointCallCacheFromCacheManager)
-                - [How to Facades Cache bind and what bind?](#HowToFacadesCacheBindAndWhatBind)
-                - [How to CacheManager mapping to one driver cache?](#HowToCacheManagerMappingToOneDriverCache)
-                - [Call static auto mapping in CacheManager?](#CallStaticAutoMappingInCacheManager)
+    - [Cache](#cache)
+        - [What is cache?](#what_is_cache)
+        - [What is cache importance in webapp?](#why_is_cache_importance_in_web_app)
+        - [What is cache in Laravel?](#what_is_cache_in_laravel)
+        - [What is type of cache in Laravel?](#what_is_type_of_cache_in_laravel)
+        - [Best practice when use driver cache?](#best_practice_when_use_driver_cache)
+        - [Contracts cache](#contracts_cache)
+        - [Dissect cache](#dissect_cache)
+            - [How to Repository cache in Laravel work?](#how_to_repository_cache_in_laravel_work)
+                - [How is Laravel get value of one key?](#how_is_laravel_get_value_of_one_key)
+                - [How is Laravel push value to one key?](#how_is_laravel_push_value_to_one_key)
+            - [How to Laravel implement one instance cache?](#how_to_laravel_implement_one_instance_cache)
+            - [How to Laravel implement one endpoint call Cache from CacheManager?](#how_to_laravel_implement_one_endpoint_call_cache_from_cache_manager)
+                - [How to Facades Cache bind and what bind?](#how_to_facades_cache_bind_and_what_bind)
+                - [How to CacheManager mapping to one driver cache?](#how_to_cache_manager_mapping_to_one_driver_cache)
+                - [Call static auto mapping in CacheManager?](#call_static_auto_mapping_in_cache_manager)
 
-        - [What is muxtex lock?](#WhatIsMuxtexLock)
-        - [How is mutex lock implement for many driver in Laravel?](#HowIsMutexLockImplementForManyDriverInLaravel)
-        - [Dissect mutex lock in redis](#DissectMutexLockInRedis)
-            - [How to algorithm of redis implement mutex lock?](#HowToRedisImplementMutexLock)
-            - [What is distribute lock?](#WhatIsDistributeLock)
-            - [What is redlock?](#WhatIsRedlock)
-            - [How to Laravel implement theory of Redis?](#HowToLaravelImplementTheoryOfRedis)
-                - [How to Laravel implement set mutex from Lua scripts?](#HowToLaravelImplementSetLuaScripts)
-                - [How to Laravel implement release mutex form Lua scripts?](#HowToLaravelImplementSetLuaScripts)
-            - [Advantages and disadvantages of mutex lock redis?](#AdvantagesAndDisadvantagesOfMutexLockRedis?)
+        - [What is muxtex lock?](#what_is_muxtex_lock)
+        - [How is mutex lock implement for many driver in Laravel?](#how_is_mutex_lock_implement_for_many_driver_in_laravel)
+        - [Dissect mutex lock in redis](#dissect_mutex_lock_in_redis)
+            - [How to algorithm of redis implement mutex lock?](#how_to_redis_implement_mutex_lock)
+            - [What is distribute lock?](#what_is_distribute_lock)
+            - [What is redlock?](#what_is_redlock)
+            - [How to Laravel implement theory of Redis?](#how_to_laravel_implement_theory_of_redis)
+                - [How to Laravel implement set mutex from Lua scripts?](#how_to_laravel_implement_set_lua_scripts)
+                - [How to Laravel implement release mutex form Lua scripts?](#how_to_laravel_implement_set_lua_scripts)
+            - [Advantages and disadvantages of mutex lock redis?](#advantages_and_disadvantages_of_mutex_lock_redis?)
 
-        - [What is local in memory?](#WhatIsLocalInMemory)
-        - [What is type of local in memory?](#WhatIsTypefLocalInMemory)
-        - [When is use local in memory?](#WhatIsUseLocalInMemory?)
-        - [Implement local in memory with Laravel?](#ImplementLocalInMemoryWithLaravel)
-        - [Advantages and disadvantages of local in memory with Laravel?](#AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel)
-        - [What is algorithm rate limit?](#WhatIsAlgorithmRateLimit)
-        - [Dissect Rate Limit Laravel](#DissectRateLimitLaravel)
-        - [What is ddos?](#WhatIsDdos)
-        - [Why do not use Rate limit laravel for attack ddos?](#WhyDoNotUseRateLimitLaravelForAttackDdos)
-        - [Best practice prevent attack ddos](#BestPracticePreventAttackDdos)
-        - [Best practice in flash sales?](#BestPracticeInFlashSales)
-    - [To do](#Todo)
+        - [What is local in memory?](#what_is_local_in_memory)
+        - [What is type of local in memory?](#what_is_type_of_local_in_memory)
+        - [When is use local in memory?](#when_is_use_local_in_memory?)
+        - [Implement local in memory with Laravel?](#implement_local_in_memory_with_laravel)
+        - [Advantages and disadvantages of local in memory with Laravel?](#advantages_and_disadvantages_of_local_in_memory_with_laravel)
+        - [What is algorithm rate limit?](#what_is_algorithm_rate_limit)
+        - [Dissect Rate Limit Laravel](#dissect_rate_limit_laravel)
+        - [What is ddos?](#what_is_ddos)
+        - [Why do not use Rate limit laravel for attack ddos?](#why_do_not_use_rate_limit_laravel_for_attack_ddos)
+        - [Best practice prevent attack ddos](#best_practice_prevent_attack_ddos)
+        - [Best practice in flash sales?](#best_practice_in_flash_sales)
+    - [To do](#todo)
 
-## How To Understand Big Project <a name="HowToUnderstandBigProject"></a>
+## How To Understand Big Project <a name="how_to_understand_big_project"></a>
 
 A large project always has a lot of lines of code, with laravel 7.X being around 400 000 lines of code. So how do you
 approach it? My approach is top down thinking, approach from layout code ==> autoload ==> module ==> detail. One
@@ -182,14 +180,14 @@ to understand the whole main component, most of the options are based on the mai
 document approach the Laravel source. I know that's the same way most programmers choose to approach a very large
 project.
 
-## Preview Laravel Layout <a name="LayoutLaravel"></a>
+## Preview Laravel Layout <a name="layout_laravel"></a>
 
-## Php And Index.php <a name="PhpAndIndexPhp"></a>
+## Php And Index.php <a name="php_and_index_php"></a>
 
 In any programming language, there is usually a startpoint to start a project. Print c, go, c++, it's main() function,
 print php, it's index.php
 
-## Index.php in Laravel <a name="IndexPhpLaravel"></a>
+## Index.php in Laravel <a name="index_php_laravel"></a>
 
 The vesion I use is laravel 7.5, this is source framework https://github.com/laravel/framework/tree/7.x.
 This is source index.php https://github.com/laravel/laravel/blob/7.x/public/index.php
@@ -225,7 +223,7 @@ $kernel->terminate($request, $response);
 Laravel make one instance of Kernel Laravel, Laravel get incoming request from webserver, push to endpoint and response
 request. Laravel terminate index.php, and terminate the process handle request generated by the webserver
 
-## Public folder in laravel <a name="PublicFolderIndexPhpLaravel"></a>
+## Public folder in laravel <a name="public_folder_index_php_laravel"></a>
 
 Why laravel has public folder? Why is index.php in there. Benefits and security of public folders. <br/>
 
@@ -263,7 +261,7 @@ Apache settings via a . htaccess file you can place in a director. This config a
 things with the public folder, it allows the webserver to access the files in the public folder and return it to the
 browser. Therefore, only files that are public will be placed in the public folder.
 
-## When save file in public folder <a name="WhenSaveFileInPublicFolder"></a>
+## When save file in public folder <a name="when_save_file_in_public_folder"></a>
 
 With the public file used for all users, you should save it in the public folder: css, js, images... </br>
 The files are specific to the request or the specific session, not stored in the public folder. Let's imagine with
@@ -272,7 +270,7 @@ request 1, called server 1. at Request 2, user1 get 1.xlsl, but loadbalance is n
 to server2. Clearly, server2 don't have the file 1.txt, confused. For this problem, use the same remote server as S3,
 don't use Laravel's public folder
 
-## How to disect Laravel source <a name="HowToDisectLaravelSource"></a>
+## How to disect Laravel source <a name="how_to_disect_laravel_source"></a>
 
 Laravel source code has many modules, many interfaces and many design patterns. Before reviewing the source, the first
 thing you need to do is determine which interface x is used by and for which class it is binding, like with Facade.
@@ -283,11 +281,11 @@ file : https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/A
 information about alias mapping interface and binding class when starting laravel app. That's the bare minimum of
 information you need to dissect Laravel.
 
-## Modul <a name="Modul"></a>
+## Modul <a name="modul"></a>
 
-## Session <a name="Session"></a>
+## Session <a name="session"></a>
 
-## Define session  <a name="DefineSession"></a>
+## Define session  <a name="define_session"></a>
 
 ![](img/session_define.png)
 
@@ -296,7 +294,7 @@ session = session_id + data mapping;  </br>
 Simply put, a session is a memory area that is directly mapped to the user upon login. With any memory area, when using
 it, it is necessary to identify (session_id) and data (data mapping). sesson_id is unique.
 
-## Session in current web app <a name="SessionInCurrentWebApp"></a>
+## Session in current web app <a name="session_in_current_web_app"></a>
 
 In the modern world of web apps, especially microservices, it is not necessary to need a memory area that holds all the
 data when the user logs in. Data in microservices directly depends on services and events, tending to be independent and
@@ -306,7 +304,7 @@ session_id + data mapping; </br>
 Session in web apps these days can use a lot of drivers, files, caches, DBs, cookies, etc. This is flexible and suitable
 for today's needs.
 
-## Session default in php is not good  <a name="DefaultSSPhpNotGood"></a>
+## Session default in php is not good  <a name="default_ss_php_not_good"></a>
 
 Session default in php not good enough? Exactly, it's not good enough for most web apps these days. Php auto generate
 session Id and save in cookie, drive of this default is file. There is almost no way to interfere with this process.
@@ -314,17 +312,17 @@ This is obviously not good enough, use Laravel's session, it's a trend as most p
 default session. Other frameworks Django, Flask, Gin, ... have different approaches to sessions but the basic idea is
 still the same general formula in the Session definition.
 
-## Session in laravel <a name="SessionInLaravel"></a>
+## Session in laravel <a name="session_in_laravel"></a>
 
-## Preview session in laravel <a name="PreviewSessionInLaravel"></a>
+## Preview session in laravel <a name="preview_session_in_laravel"></a>
 
 Laravel Session is built by Laravel itself, completely independent of default php session. It fully supports all popular
 drives: cache (redis/memcache, file, DB, cookie, ...). In a modern web application that needs high performance, I
 recommend drive cache(redis/memcache).
 
-## Dissect session in laravel  <a name="DissectSessionInLaravel"></a>
+## Dissect session in laravel  <a name="dissect_session_in_laravel"></a>
 
-### Concat session <a name="ConcatSession"></a>
+### Concat session <a name="concat_session"></a>
 
 Session has many drives, the main operations with memory are read and write, so it is easy to guess the main interface
 is read(), write(), getDefaultDriver() </br>
@@ -347,7 +345,7 @@ in the system. </br>
 Print file: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Session/Session.php. It saves all
 interfaces for session interaction, including push(), get().
 
-### Detail session <a name="DetailSession"></a>
+### Detail session <a name="detail_session"></a>
 
 ``` 
 /**
@@ -392,9 +390,9 @@ session key, this operation is quite simple. </br>
 ===> to summarize there are two class blocks, code block 1 gets the instance drive configured, Code block 2 implements
 the functions of each drive, this is the main job of the Laravel session.
 
-# Csrf <a name="Csrf"></a>
+# Csrf <a name="csrf"></a>
 
-## Csrf Security Define <a name="CsrfSecurityDefine"></a>
+## Csrf Security Define <a name="csrf_security_define"></a>
 
 ![](img/csrf_define.png)
 
@@ -406,7 +404,7 @@ other web. After this action, hackers often submit a form to the web they want t
 authen, broswer forward cookie and data, then request is valid. Hackers look for loopholes to send requests that damage
 users and websites.
 
-## Prevention Csrf <a name="PreventionCsrf"></a>
+## Prevention Csrf <a name="prevention_csrf"></a>
 
 Prevention Csrf:
 Starting from the CSRF definition, i have prevention way: </br>
@@ -418,7 +416,7 @@ request reject beacause fail authen. </br>
 +) Open mode check CORS : it's bad solution, why it changes very much business. It's just only good solution when web
 wants open check CORS(not for prevention CSRF, for business) </br>
 
-## Csrf Token Define <a name="CrsfTokenDefines"></a>
+## Csrf Token Define <a name="crsf_token_defines"></a>
 
 ![](img/csrf_token.png)
 
@@ -430,14 +428,14 @@ Ideal is : we create token for submit form, when submit form, if token match, we
 hacker pass authen base session or token use CSRF attack, hacker don't simple get CSRF token ==> hacker don't submit
 form ==> don't have any attacks.
 
-## Why don't use Csrf for GET method <a name="DontUseCsrfForGetMethod"></a>
+## Why don't use Csrf for GET method <a name="dont_use_csrf_for_get_method"></a>
 
 Why don't use CSRF for GET method: </br>
 In define api, GET method return data, not change resouce, it's not risk of attacks. Of course, you can use the CSRF
 token for the Get method,so it's not necessary, always remember the theorem, security and complexity are usually
 proportional.
 
-## Csrf Token Laravel <a name="CrsfTokenLaravel"></a>
+## Csrf Token Laravel <a name="crsf_token_laravel"></a>
 
 Laravel keep ideal Crsf when implement.
 How to create sessions?
@@ -555,9 +553,9 @@ token(), $token).
 You have skill debug of hard bug related to CSRF, 419 page expiry. Have CSRF bug is difficult to find context, but if you clearly core Laravel CSRF, you ready debug all.
 ```
 
-## Xss <a name="Xss"></a>
+## Xss <a name="xss"></a>
 
-## Xss Security Define <a name="XssSecurityDefine"></a>
+## Xss Security Define <a name="xss_security_define"></a>
 
 ![](img/xss_define.png)
 
@@ -574,7 +572,7 @@ You have skill debug of hard bug related to CSRF, 419 page expiry. Have CSRF bug
 In short, Xss attack from the trust a use has in a particular Web application.
 ```
 
-## Prevention Xss <a name="PreventionXss"></a>
+## Prevention Xss <a name="prevention_xss"></a>
 
 How to Prevent Xss: </br>
 +) Filter resource Xss </br>
@@ -582,13 +580,13 @@ How to Prevent Xss: </br>
 +) SameSite Origin Cookies </br>
 +) Open mode check CORS in backend(not good solution) </br>
 
-## Best practice Xss <a name="BestPracticeXss"></a>
+## Best practice Xss <a name="best_practice_xss"></a>
 
 In my way, best practice prevent Xss: </br>
 +) Actively filter data Xss after save
 +) Http Only cookies, Http Same Site Origin cookies
 
-## Why are there many type token, accessToken, refreshToken, What is their main purpose? <a name="WhatIsTheirMainPurposeManyTypeToken"></a>
+## Why are there many type token, accessToken, refreshToken, What is their main purpose? <a name="what_is_their_main_purpose_many_type_token"></a>
 
 This is a question that has a lot of opinions and I really haven't found a convincing answer. This is why I had to go
 answer it myself. The main reason is to increase security, reduce the disclosure of important information. </br>
@@ -611,7 +609,7 @@ have reduced the risk of leaking important information of the system, contributi
 Note that the probability of exposing a token it does not depend on the type of token, but on the frequency of use of
 that token. Please use the right token for the right purpose. </br>
 
-## Where save token in browser, what is best practice? <a name="WhereSaveToken"></a>
+## Where save token in browser, what is best practice? <a name="where_save_token"></a>
 
 Where to save tokens in browser? This is classic Q/A? </br>
 There are countless answers and countless approaches. For me when approaching in the direction of security and
@@ -622,7 +620,7 @@ performance, it my way: </br>
 But, In Mode Http only, js don't get cookies. So, how to call ajax, ... or same tool to request to server. Please check
 next part. </br>
 
-## How do ajax,... work with Http only cookie <a name="AjaxHttpOnlyCookie"></a>
+## How do ajax,... work with Http only cookie <a name="ajax_http_only_cookie"></a>
 
 This is problem: token (jwt token) default don't verify from cookie. Token is stateless, in app or end point, it is
 usually passed to header. But in broswer, in part: #WhereSaveToken, i suggest token should be stored http only
@@ -644,7 +642,7 @@ Simple way, leave that to the backend. All you need to do is create a middleware
 This solution work for all browser and all tool call api. Great !!!
 ```
 
-## Why framework frontend often use local store for save token? <a name="WhyFrameworkFrontEndOfternUserLocalStoreForSaveToken"></a>
+## Why framework frontend often use local store for save token? <a name="why_framework_front_end_oftern_user_local_store_for_save_token"></a>
 
 First, it is an unsafe way. As I have analyzed in the previous sections as well as all the leading security
 organizations in the world recommend, save tokens in cookies.
@@ -657,9 +655,9 @@ that they store in the local store is secure enough, they are good people and th
 an excuse for the fact that the block writer doesn't understand deeply about it. Base yourself on the deepest theory,
 not on the basis of the majority.
 
-## Http and Routing <a name="HttpAndRouting"></a>
+## Http and Routing <a name="http_and_routing"></a>
 
-## Preview type Http server <a name="PreviewTypeHttpServer"></a>
+## Preview type Http server <a name="preview_type_http_server"></a>
 
 1) Independent webserver: </br>
    ![](img/apache_process.png)
@@ -716,7 +714,11 @@ model is more popular. </br>
 Php has webserver types according to both models above, but the most popular model is 1: Independent webserver. The same
 is true for Laravel </br>
 
-## Preview contracts in http modules <a name="PreviewContractsInHttpModules"></a>
+## Why  are there so many webserver models? <a name="why_are_there_so_many_webserver_models?"></a>
+
+There are many languages and backend approaches, each of which needs to have some appropriate webserver model. </br>
+
+## Preview contracts in http modules <a name="preview_contracts_in_http_modules"></a>
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Routing/Registrar.php , laravel defines the
 related interfaces that register a common http method: GET, POST, PUSH, OPTION </br>
@@ -727,20 +729,14 @@ the interface for binding a router. </br>
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Http/Kernel.php, Laravel defines interface for
 Bootstrap http request to kernel, defines endpoint handle() for handling all http requests </br>
 
-## Why  are there so many webserver models? <a name="WhyAreThereSoManyWebserverModels?"></a>
-
-There are many languages and backend approaches, each of which needs to have some appropriate webserver model. </br>
-
-## Why is the webServer model constantly changing? <a name="WhyIsTheWebServerModelConstantlyChanging?"></a>
+## Why is the webServer model constantly changing? <a name="why_is_the_web_server_model_constantly_changing?"></a>
 
 Languages and technologies change constantly, so do web servers. But keep in mind that the ultimate goal of webserver
 improvement is usually to increase more than the amount of rps that can be handled in a server. </br>
 
-## Preview contracts in http modules <a name="PreviewContractsInHttpModules"></a>
+## Dissect http and routing modules <a name="dissect_http_and_routing_modules"></a>
 
-## Dissect http and routing modules <a name="DissectHttpAndRoutingModules"></a>
-
-## How to register one router work? <a name="HowToRegisterOneRouterWork?"></a>
+## How to register one router work? <a name="how_to_register_one_router_work?"></a>
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Routing/Router.php, preview one router get: </br>
 
@@ -853,12 +849,12 @@ foreach ($route->methods() as $method) {
 }
 ``` 
 
-## How to mapping request to server with router? <a name="HowToMappingRequestToServerWithRoute?"></a>
+## How to mapping request to server with router? <a name="how_to_mapping_request_to_server_with_route?"></a>
 
 Simply put, laravel aggregates all the routes you subscribe to in an array (specifically in the previous section). Each
 request to the webserver, laravel parses request information and maping with array saved all router. </br>
 
-## Laravel handle all request with one endpoint <a name="LaravelHandleAllRequestWithOneEndpoint"></a>
+## Laravel handle all request with one endpoint <a name="laravel_handle_all_request_with_one_endpoint"></a>
 
 source index.php:
 
@@ -927,32 +923,32 @@ try {
 process includes many processes, but the most basic will be: find the corresponding callback acti, run the action
 callback, dispatch the corresponding events to be registered and handle http exception.
 
-## Cache <a name="Cache"></a>
+## Cache <a name="cache"></a>
 
-## What is cache? <a name="WhatIsCache"></a>
+## What is cache? <a name="what_is_cache"></a>
 
 ![](img/cache_define.png)
 </br> For web apps, the cache backend is a stored memory that represents a certain data of the system. Don't depend on
 the figure next to it, it's simply a memory area, which can be independent or dependent on the database (it doesn't
 matter)
 
-## What is cache importance in webapp? <a name="WhyIsCacheImportanceInWebapp"></a>
+## What is cache importance in webapp? <a name="why_is_cache_importance_in_web_app"></a>
 
 Unlike about ten years ago, today's webapp is growing and there are many problems arising: number of users, traffic,
 storage io limit. All of them are many times over from the early days of the web. Cache is an integral part of today's
 web apps to solve these problems. </br>
 
-## What is cache in Laravel? <a name="WhatIsCacheInLaravel"></a>
+## What is cache in Laravel? <a name="what_is_cache_in_laravel"></a>
 
 Cache Laravel is like defining cache, an area of memory that serves storage. Cache Laravel is developed independently of
 the php cache and is a very successful tool that effectively serves developers.
 
-## What is type of cache in Laravel? <a name="WhatIsTypeOfCacheInLaravel"></a>
+## What is type of cache in Laravel? <a name="what_is_type_of_cache_in_laravel"></a>
 
 Laravel supports popular caching backends like Memcached, Redis, DynamoDB, and relational databases out of the box,
 file.
 
-## Best practice when use driver cache? <a name="BestPracticeWhenUseDriverCache"></a>
+## Best practice when use driver cache? <a name="best_practice_when_use_driver_cache"></a>
 
 This is true for Laravel as well as other web app environments:
 
@@ -963,7 +959,7 @@ This is true for Laravel as well as other web app environments:
    general recommendation because it depends on your system context infra. These are solutions that offer slow
    performance but don't worry, as long as it meets your problem, it should be good enough to use. </br>
 
-## Contracts cache? <a name="ContractsCache"></a>
+## Contracts cache? <a name="contracts_cache"></a>
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Cache/Repository.php , Laravel define
 interface for common manipulation with cache: pull, put, add, get , set, delete... Repository is the part that interacts
@@ -975,15 +971,15 @@ store() returns the Repository's instance by name. </br>
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Cache/Lock.php, Laravel define interface for
 mutex lock, basic operations with a mutex: get, block, set, release, forceRelease. </br>
 
-## Dissect cache <a name="DissectCache"></a>
+## Dissect cache <a name="dissect_cache"></a>
 
-## How to Repository cache in Laravel work? <a name="HowToRepositoryCacheInLaravelWork"></a>
+## How to Repository cache in Laravel work? <a name="how_to_repository_cache_in_laravel_work"></a>
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Contracts/Cache/Repository.php , Laravel defines one
 repo for all drive cache,
 it agrees on a common standard for drive caches.
 
-## How is Laravel get value of one key? <a name="HowIsLaravelGetValueOfOneKey"></a>
+## How is Laravel get value of one key? <a name="how_is_laravel_get_value_of_one_key"></a>
 
 ``` 
       /**
@@ -1110,7 +1106,7 @@ infra and return results. Details how Laravel parser and handle command redis dr
 
 $result = $this->client->{$method}(...$parameters); Laravel parser command to Lua Scripts and executes it. </br>
 
-## How is Laravel push value to one key? <a name="HowIsLaravelPushValueToOneKey"></a>
+## How is Laravel push value to one key? <a name="how_is_laravel_push_value_to_one_key"></a>
 
 ```
 /**
@@ -1150,7 +1146,7 @@ $result = $this->client->{$method}(...$parameters); Laravel parser command to Lu
 ==> same as get(), layout classes will be like, get $this->store from config, from type push convert to script of drives
 cache, finally fire the event and return.
 
-## How to Laravel implement one instance cache? <a name="HowToLaravelImplementOneInstanceCache"></a>
+## How to Laravel implement one instance cache? <a name="how_to_laravel_implement_one_instance_cache"></a>
 
 For each drive, Laravel implements 2 classes, 1 class for Store and query, 1 class for locking. For example with redis
 drive, it is: RedisStore.php and RedisLock.php.
@@ -1161,9 +1157,9 @@ RedisStore will be passed by Laravel to $this->store in Repository.php. Now you 
 Repository.php, it design pattern repository, $kernel of Laravel will act as a factory that reads the config cache and
 binds the appropriate instance to Cache/Repository.php
 
-## How to Laravel implement one endpoint call Cache from CacheManager? <a name="HowToLaravelImplementOneEndpointCallCacheFromCacheManager"></a>
+## How to Laravel implement one endpoint call Cache from CacheManager? <a name="how_to_laravel_implement_one_endpoint_call_cache_from_cache_manager"></a>
 
-## How to Facades Cache bind and what bind? <a name="HowToFacadesCacheBindAndWhatBind"></a>
+## How to Facades Cache bind and what bind? <a name="how_to_facades_cache_bind_and_what_bind"></a>
 
 Print https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Application.php#L1241
 
@@ -1174,7 +1170,7 @@ Print https://github.com/laravel/framework/blob/7.x/src/Illuminate/Foundation/Ap
 Laravel binding facades 'cache' to \Illuminate\Cache\CacheManager::class and implement
 \Illuminate\Contracts\Cache\Factory::class.
 
-## How to CacheManager mapping to one driver cache? <a name="HowToCacheManagerMappingToOneDriverCache"></a>
+## How to CacheManager mapping to one driver cache? <a name="how_to_cache_manager_mapping_to_one_driver_cache"></a>
 
 In https://github.com/laravel/framework/blob/7.x/src/Illuminate/Cache/CacheManager.php
 
@@ -1241,7 +1237,7 @@ returned \Illuminate\Contracts\Cache\Repository. This repository has been analyz
 section. The class takes \Illuminate\Contracts\Foundation\Application and uses it throughout the class.
 Foundation\Application is the full object of components binding in Laravel's core.
 
-## Call static auto mapping in CacheManager?  <a name="CallStaticAutoMappingInCacheManager"></a>
+## Call static auto mapping in CacheManager?  <a name="call_static_auto_mapping_in_cache_manager"></a>
 
 ```
 /**
@@ -1265,22 +1261,22 @@ endpoint from autoloadind: return $ this->store()->$method(...$parameters); </br
 Many argue that Laravel is abusing calling static. Maybe, i'm not sure. But in Laravel, the php magic method is used
 very cleverly and seems to be on the level of art.
 
-## What is mutex lock?  <a name="WhatIsMutexLock"></a>
+## What is mutex lock?  <a name="what_is_muxtex_lock"></a>
 
 ![](img/mutex_log_define.png)
 
 Mutex lock is a mechanism to share resources in shared resources. Regardless of the context, the mutex must always have
 a synchronous step, which is used to control race conditions.
 
-## How is mutex lock implement for many driver in Laravel?  <a name="HowIsMutexLockImplementForManyDriverInLaravel"></a>
+## How is mutex lock implement for many driver in Laravel?  <a name="how_is_mutex_lock_implement_for_many_driver_in_laravel"></a>
 
 The implementation mechanism is the same as store data to cache. The endpoints in the Laravel driver are the same as for
 store and query: RedisLock.php,
 MemcachedLock.php, DatabaseLock.php ... Each driver will implement one lock for that driver.
 
-## Dissect mutex lock in redis?  <a name="DissectMutexLockInRedis"></a>
+## Dissect mutex lock in redis?  <a name="dissect_mutex_lock_in_redis"></a>
 
-## How to algorithm of redis implement mutex lock? <a name="HowToRedisImplementMutexLock"></a>
+## How to algorithm of redis implement mutex lock? <a name="how_to_redis_implement_mutex_lock"></a>
 
 ![](img/mutex_lock_redis_work.png)
 Doc redis said it quite clearly, I would like to quote and explain more:
@@ -1356,22 +1352,22 @@ the owner of the lock, otherwise it is invalid. </br>
 
 ==>> with one instance redis, muxtex lock implementation is simple and without many problems.
 
-## What is problem with distribute lock?  <a name="WhatIsProblemWithDistributeLock"></a>
+## What is distribute lock? <a name="what_is_distribute_lock"></a>
 
 ![](img/distribute_lock.png)
 
 Distribute lock is a distributed lock system plus verify lock consensus mechanism for the purpose of increasing system's
 lock tolerance
 
-## What is redlock?  <a name="WhatIsRedlock"></a>
+## What is redlock?  <a name="what_is_redlock"></a>
 
 Redlock is a distributed locking system on redis. Specifically the Redlock algorithm is
 implemented: http://antirez.com/news/77.
 A few libraries that implement redock: https://github.com/amyangfei/redlock-go...
 
-## How to Laravel implement theory of Redis?  <a name="HowToLaravelImplementTheoryOfRedis"></a>
+## How to Laravel implement theory of Redis?  <a name="how_to_laravel_implement_theory_of_redis"></a>
 
-## How to Laravel implement set mutex from Lua scripts?  <a name="HowToLaravelImplementSetLuaScripts"></a>
+## How to Laravel implement set mutex from Lua scripts?  <a name="how_to_laravel_implement_set_lua_scripts"></a>
 
 In Abstract class: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Cache/Lock.php , Laravel implements an
 abstract class for every drive lock to follow:
@@ -1457,7 +1453,7 @@ Simply, as demonstrated in #HowToRedisImplementMutexLock, Laravel run Lua script
 
 resource_name is $this->name, my_random_value, my_random_value is $this->owner.
 
-## How to Laravel implement release mutex form Lua scripts?  <a name="HowToLaravelImplementSetLuaScripts"></a>
+## How to Laravel implement release mutex form Lua scripts?  <a name="how_to_laravel_implement_set_lua_scripts"></a>
 
 Print Abstract class: https://github.com/laravel/framework/blob/7.x/src/Illuminate/Cache/Lock.php
 
@@ -1519,7 +1515,7 @@ end
 As mentioned, this is an authen and verify step, only the owner of the key has the right to release the key, or have to
 wait until invalidate cache.  </br>
 
-## Advantages and disadvantages of mutex lock redis?  <a name="AdvantagesAndDisadvantagesOfMutexLockRedis"></a>
+## Advantages and disadvantages of mutex lock redis?  <a name="advantages_and_disadvantages_of_mutex_lock_redis"></a>
 
 +) Advantages: </br>
 High performance: </br>
@@ -1532,7 +1528,7 @@ plays on the speed power of redis. If you use redis mutex lock for updating data
 DB, if you handle redis poorly, redis crash can lead to lost key locks, leading to data confusion. This never happens if
 you use locks and transactions at the database layer.
 
-# What is local in memory? <a name="WhatIsLocalInMemory"></a>
+# What is local in memory? <a name="what_is_local_in_memory"></a>
 
 ![](img/local_in_memory.png)
 
@@ -1541,7 +1537,7 @@ implemented in local server run service, it has very high speed because it ignor
 server you deploy backend service, you deploy a local cache on that same server to get the highest speed by ignoring
 network time.
 
-# What is type of local in memory? <a name="WhatIsTypefLocalInMemory"></a>
+# What is type of local in memory? <a name="what_is_type_of_local_in_memory"></a>
 
 This depends on the language:
 
@@ -1551,20 +1547,20 @@ This depends on the language:
 2) Language does not share memory between processes (php), they often implement 3rd party service cache on the same
    server as the running service. This method is less efficient than method 1.
 
-# When is use local in memory? <a name="WhatIsUseLocalInMemory"></a>
+# When is use local in memory? <a name="when_is_use_local_in_memory"></a>
 
 Use cases: </br>
 Data is repetitive, requires extremely low latency and the frequency of data changes is not large. Usually data config,
 data setup, data is quite large but very limited to change.
 
-# Implement local in memory with Laravel? <a name="ImplementLocalInMemoryWithLaravel"></a>
+# Implement local in memory with Laravel? <a name="implement_local_in_memory_with_laravel"></a>
 
 Php is a language without shared memory. The common implementation is to use a 3rd party service cache. Specifically,
 with docker, you have 2 backend images and redis images, you deploy it in docker compose, each server run image deploys
 those 2 services.
 To update the new value, you need an event driven to update the data accordingly.
 
-# Advantages and disadvantages of local in memory with Laravel? <a name="AdvantagesAndDisadvantagesOfLocalInMemoryWithLaravel"></a>
+# Advantages and disadvantages of local in memory with Laravel? <a name="advantages_and_disadvantages_of_local_in_memory_with_laravel"></a>
 
 Advantages: </br>
 Get the highest speed, many times higher with cache remote. </br>
@@ -1573,14 +1569,14 @@ Cons: </br>
 1) Resource consuming, each instance will have to take resources to run an additional local cache service. </br>
 2) Deploying and invalidating variables with event drive is not easy with uninvested products. </br>
 
-# What is algorithm rate limit? <a name="WhatIsAlgorithmRateLimit"></a>
+# What is algorithm rate limit? <a name="what_is_algorithm_rate_limit"></a>
 
 ![](img/ratelimit_define.png)
 
 Simply, rate limit is a counter that helps to check the limit of a resource (request, query, ...). For each request to
 count, it increments the counter by 1 and checks with limited config.
 
-# Dissect Rate Limit Laravel <a name="DissectRateLimitLaravel"></a>
+# Dissect Rate Limit Laravel <a name="dissect_rate_limit_laravel"></a>
 
 print https://github.com/laravel/framework/blob/9.x/src/Illuminate/Cache/RateLimiter.php:
 
@@ -1738,7 +1734,7 @@ Laravel throws ex and blocks the request stream:
 Everything ends when the config time is over, the variables reset to the original process và tiếp tục chạy từ start
 point.
 
-# What is ddos? <a name="WhatIsDdos"></a>
+# What is ddos? <a name="what_is_ddos"></a>
 
 ![](img/ddos_define.png)
 
@@ -1746,7 +1742,7 @@ Ddos is a form of denial of service attack. Attackers often use large amounts of
 that constantly change ip requests. It simply creates a very large request threshold that overloads the system's
 responsiveness causing the system to lose control and down.
 
-# Why do not use Rate limit laravel for attack ddos? <a name="WhyDoNotUseRateLimitLaravelForAttackDdos"></a>
+# Why do not use Rate limit laravel for attack ddos? <a name="why_do_not_use_rate_limit_laravel_for_attack_ddos"></a>
 
 ![](img/ddos_work.png)
 Let's analyze some Laravel rate limit features. Activity flow goes to the server, goes to the cache, updates the
@@ -1756,7 +1752,7 @@ or cache service, or all three, or extra services will be overloaded. Which one 
 context, but the project will definitely suffer. Remember one thing, never use larave ratelimit attack ddo. This is true
 for all technologies and languages, not just php. Remember not to let things go too far. Good luck.
 
-# Best practice prevent attack ddos? <a name="BestPracticePreventAttackDdos"></a>
+# Best practice prevent attack ddos? <a name="best_practice_prevent_attack_ddos"></a>
 
 Ddos prevention is a difficult thing, because there are many types of ddos attacks and the most difficult thing is to
 distinguish ddos requests from normal requests. I recommend using a 3rd party service for this, for
@@ -1765,7 +1761,7 @@ com/en/shield/ddos-attack-protection/ </br>
 I can recommend you the simplest way is to use DNS service rate limiter, cloud service. It is simple and quite useful in
 protection from ddos attack. At least, it won't crash the system.
 
-# Best practice in flash sales? <a name="BestPracticeInFlashSales"></a>
+# Best practice in flash sales? <a name="best_practice_in_flash_sales"></a>
 
 ![](img/rate_limit_flash_sales.png)
 
@@ -1811,7 +1807,7 @@ have a repo to verify this: </br>
    This is related to the specific project, I do not mention here. This principle helps you to find the system's key
    service, it is the bottleneck of the system. This helps you calculate the exact rate limit number. </br>
 
-# To do? <a name="Todo"></a>
+# To do? <a name="todo"></a>
 
 I have dissect the most important and essential modules of Laravel. It is the module that any frame has required. But
 right now, I don't have enough time and resources to maintain this project. If you have a need to contribute or want me
