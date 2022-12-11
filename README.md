@@ -55,7 +55,7 @@ how you read is up to your preference. Here we go)
 - [Preview type Http server](#preview_type_http_server)
 - [Why  are there so many webserver models?](#why_are_there_so_many_webserver_models?)
 - [Why is the webServer model constantly changing?](#why_is_the_web_server_model_constantly_changing?)
-- [What is trending in Http server?](#what_is_trending_in_http_server?)
+- [What is trending in Http server?](#what_is_trending_in_http_server)
 - [Type http server in Php and Laravel](#type_http_server_in_php_and_laravel)
 - [Preview contracts in http modules](#preview_contracts_in_http_modules)
 - [Dissect http and routing modules](#dissect_http_and_routing_modules)
@@ -121,7 +121,7 @@ how you read is up to your preference. Here we go)
         - [Preview type Http server](#preview_type_http_server)
         - [Why  are there so many webserver models?](#why_are_there_so_many_webserver_models?)
         - [Why is the webServer model constantly changing?](#why_is_the_web_server_model_constantly_changing?)
-        - [What is trending in Http server?](#what_is_trending_in_http_server?)
+        - [What is trending in Http server?](#what_is_trending_in_http_server)
         - [Type http server in Php and Laravel](#type_http_server_in_php_and_laravel)
         - [Preview contracts in http modules](#preview_contracts_in_http_modules)
         - [Dissect http and routing modules](#dissect_http_and_routing_modules)
@@ -704,7 +704,7 @@ huge concurrency threshold with the same number of servers to handle the request
    ==> this is a model with performance close to Haproxy, the key is non blocking form epoll and pool worker, ring
    buffer </br>
 
-## What is trending in Http server? <a name="WhatIsTrendingInHttpServer"></a>
+## What is trending in Http server? <a name="what_is_trending_in_http_server"></a>
 
 For performance, trending is WebServer integrated with platform. But, in terms of popularity, the Independent webserver
 model is more popular. </br>
